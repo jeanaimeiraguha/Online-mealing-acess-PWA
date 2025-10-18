@@ -31,6 +31,14 @@ export default function IgifuDashboard() {
   const [showInbox, setShowInbox] = useState(false);
   const [toast, setToast] = useState(null);
 
+  // ---------- NEW state for the payment modal (added, minimal) ----------
+  const [showPayment, setShowPayment] = useState(false);
+  const [mealQty, setMealQty] = useState(1);
+  const [paymentMethod, setPaymentMethod] = useState("Airtel Money");
+  const [paymentPhone, setPaymentPhone] = useState("+250");
+  const [processing, setProcessing] = useState(false);
+  // ---------------------------------------------------------------------
+
   const shouldReduceMotion = useReducedMotion();
 
   // Greeting + default page
@@ -124,7 +132,7 @@ export default function IgifuDashboard() {
               {selectedCard === "No Card" ? (
                 <>
                   <button
-                    onClick={() => showToast("Opening card purchase…")}
+                    onClick={() => setShowPayment(true)} // <-- minimal change: open modal
                     className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-600 text-white font-semibold hover:bg-blue-700 active:scale-95 transition"
                   >
                     Buy Meal Card
@@ -232,7 +240,7 @@ export default function IgifuDashboard() {
       },
       {
         name: "RP - Tumba Bistro",
-        desc: "Tasty lunch and free Wi‑Fi corner.",
+        desc: "Tasty lunch and free Wi-Fi corner.",
         image:
           "https://images.unsplash.com/photo-1546069901-ba9599a7e63?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
       },
@@ -339,7 +347,7 @@ export default function IgifuDashboard() {
         💰 Student Loans
       </h2>
       <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
-        Need a meal? Get short‑term credit repayable after recharge.
+        Need a meal? Get short-term credit repayable after recharge.
       </p>
 
       <div className="rounded-2xl border border-green-200 dark:border-emerald-900/40 bg-green-50 dark:bg-emerald-950/20 p-5">
@@ -465,17 +473,58 @@ export default function IgifuDashboard() {
     []
   );
 
+  // -------------------- Payment request from frontend --------------------
+  // This calls your backend route /api/pay which should securely call Airtel or MTN APIs.
+  const handlePay = async () => {
+    try {
+      setProcessing(true);
+      const amount = mealQty * 500 + 800; // same calc used in UI
+      const payload = {
+        provider: paymentMethod === "Airtel Money" ? "airtel" : "mtn",
+        phone: paymentPhone,
+        amount,
+        qty: mealQty,
+        description: "Igifu MealCard purchase",
+      };
+
+      const res = await fetch("/api/pay", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+      setProcessing(false);
+
+      if (!res.ok) {
+        showToast(data?.message || "Payment failed", "warn");
+        return;
+      }
+
+      // Backend should return a status and any payment reference
+      showToast(data?.message || "Payment initiated ✅", "success");
+
+      // Optionally close modal on success:
+      setShowPayment(false);
+    } catch (err) {
+      setProcessing(false);
+      showToast("Payment error — try again", "warn");
+      console.error("Payment error:", err);
+    }
+  };
+  // ---------------------------------------------------------------------
+
   return (
     <div className="min-h-screen font-sans flex flex-col bg-[#f5f8ff] text-[#1a1a1a] dark:bg-[#0b0b12] dark:text-gray-100 transition-colors duration-300">
       {/* Header */}
       <header className="bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-600 text-white px-4 py-3 flex items-center justify-between sticky top-0 z-40 shadow">
         <div className="flex items-center gap-3">
-          <div className="text-2xl" aria-hidden>🍽️</div>
+          <div className="text-2xl" aria-hidden>
+            🍽️
+          </div>
           <div className="leading-tight">
             <div className="text-xs opacity-90">{greeting}</div>
-            <div className="text-sm font-semibold flex items-center">
-              RichGuy
-            </div>
+            <div className="text-sm font-semibold flex items-center">RichGuy</div>
           </div>
         </div>
         <div className="flex items-center gap-3">
@@ -632,6 +681,134 @@ export default function IgifuDashboard() {
           </motion.aside>
         )}
       </AnimatePresence>
+
+      {/* ---------------- Payment Modal (UI like your image) ---------------- */}
+      <AnimatePresence>
+        {showPayment && (
+          <motion.div
+            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => {
+              if (!processing) setShowPayment(false);
+            }}
+          >
+            <motion.div
+              onClick={(e) => e.stopPropagation()}
+              initial={{ scale: 0.96, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.96, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 260, damping: 22 }}
+              className="w-full max-w-md bg-[#0f1724] text-white rounded-2xl shadow-xl p-5 border border-gray-700"
+            >
+              <h3 className="text-lg font-semibold text-center mb-3">
+                Confirm your Igifu purchase
+              </h3>
+
+              {/* Quantity control */}
+              <div className="flex items-center justify-between bg-[#111827] rounded-xl p-3 mb-3">
+                <span className="text-sm text-gray-300">Meal Quantity:</span>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => setMealQty((q) => Math.max(1, q - 1))}
+                    className="w-8 h-8 rounded-md bg-gray-700 hover:bg-gray-600"
+                    disabled={processing}
+                  >
+                    −
+                  </button>
+                  <div className="w-10 text-center font-semibold text-white">
+                    {mealQty}
+                  </div>
+                  <button
+                    onClick={() => setMealQty((q) => q + 1)}
+                    className="w-8 h-8 rounded-md bg-blue-600 hover:bg-blue-500"
+                    disabled={processing}
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+
+              {/* Summary */}
+              <div className="space-y-2 mb-3">
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-400">You get</span>
+                  <span className="font-semibold text-green-400">{mealQty} meals</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-400">Price</span>
+                  <span className="font-semibold text-blue-400">{(mealQty * 500).toLocaleString()} Rwf</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-400">% Fee</span>
+                  <span className="font-semibold text-yellow-400">800 Rwf</span>
+                </div>
+                <div className="flex justify-between border-t border-gray-700 pt-2 mt-2 font-semibold">
+                  <span>Total to pay:</span>
+                  <span className="text-green-400">{(mealQty * 500 + 800).toLocaleString()} Rwf</span>
+                </div>
+              </div>
+
+              {/* Payment method */}
+              <div className="mb-3">
+                <label className="text-sm text-gray-400">Pay with:</label>
+                <select
+                  value={paymentMethod}
+                  onChange={(e) => setPaymentMethod(e.target.value)}
+                  className="w-full mt-1 p-2 rounded bg-[#0b1220] border border-gray-700"
+                  disabled={processing}
+                >
+                  <option>Airtel Money</option>
+                  <option>MTN MoMo</option>
+                </select>
+              </div>
+
+              <div className="mb-3">
+                <label className="text-sm text-gray-400">Payment number:</label>
+                <input
+                  type="tel"
+                  value={paymentPhone}
+                  onChange={(e) => setPaymentPhone(e.target.value)}
+                  placeholder="+250..."
+                  className="w-full mt-1 p-2 rounded bg-[#0b1220] border border-gray-700 text-white outline-none"
+                  disabled={processing}
+                />
+              </div>
+
+              <p className="text-xs text-gray-500 mb-3">By paying, I agree to Igifu <span className="underline">Terms</span> and <span className="underline">Privacy</span>.</p>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowPayment(false)}
+                  className="flex-1 bg-red-600 hover:bg-red-700 rounded-lg py-2 font-semibold"
+                  disabled={processing}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={async () => {
+                    if (processing) return;
+                    // Basic validation
+                    if (!paymentPhone || paymentPhone.length < 6) {
+                      showToast("Enter valid phone", "warn");
+                      return;
+                    }
+                    setProcessing(true);
+                    // call frontend handler
+                    await handlePay();
+                    setProcessing(false);
+                  }}
+                  className="flex-1 bg-green-600 hover:bg-green-700 rounded-lg py-2 font-semibold flex items-center justify-center gap-2"
+                >
+                  {processing ? "Processing…" : `Pay ${(mealQty * 500 + 800).toLocaleString()} Rwf`}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      {/* ---------------- end payment modal ---------------- */}
 
       {/* Toast */}
       <AnimatePresence>
