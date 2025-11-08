@@ -329,7 +329,7 @@ const SignUpPage = () => {
           const biometricSuccess = await handleBiometricLogin();
           if (biometricSuccess) {
             isSuccess = true;
-            path = selectedRole === "student" ? "/igifu-dashboard" : "/restaurentdashboard";
+            // path = selectedRole === "student" ? "/igifu-dashboard" : "/restaurentdashboard";
           }
         } 
         

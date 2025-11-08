@@ -259,8 +259,8 @@ function IgifuDigitalCard({ startBalance = 25000, name = "Student Name" }) {
                   <div className="text-sm font-semibold">{name}</div>
                 </div>
                 <div className="text-right">
-                  <div className="text-[10px] opacity-70 mb-1">VALID THRU</div>
-                  <div className="text-sm font-semibold">12/26</div>
+                  <div className="text-[10px] opacity-70 mb-1"></div>
+                  <div className="text-sm font-semibold"></div>
                 </div>
               </div>
             </div>
