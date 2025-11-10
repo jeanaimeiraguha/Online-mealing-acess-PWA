@@ -1,3 +1,4 @@
+/* global PublicKeyCredential */
 import React, { useState, useEffect } from "react";
 import {
   FaLock,
@@ -7,7 +8,6 @@ import {
   FaUtensils,
   FaSpinner,
   FaCheck,
-  FaEnvelope,
   FaFingerprint,
   FaShieldAlt,
   FaUserCheck,
@@ -18,149 +18,190 @@ import { HiCheckCircle } from "react-icons/hi";
 import { BiScan } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
-import confetti from 'canvas-confetti';
 
-// WebAuthn Helper Functions
+// ==================== WebAuthn Helper ====================
 const WebAuthnHelper = {
-  // Check if WebAuthn is supported
-  isSupported: () => {
-    return !!(navigator.credentials && navigator.credentials.create && navigator.credentials.get);
-  },
+  // Basic support check
+  isSupported: () =>
+    typeof window !== "undefined" &&
+    window.isSecureContext && // HTTPS or localhost
+    "PublicKeyCredential" in window &&
+    navigator.credentials &&
+    typeof navigator.credentials.create === "function" &&
+    typeof navigator.credentials.get === "function",
 
-  // Convert string to ArrayBuffer
-  stringToArrayBuffer: (str) => {
-    const encoder = new TextEncoder();
-    return encoder.encode(str);
-  },
-
-  // Convert ArrayBuffer to Base64
-  arrayBufferToBase64: (buffer) => {
+  // base64url
+  toBase64Url: (buffer) => {
     const bytes = new Uint8Array(buffer);
-    let binary = '';
-    for (let i = 0; i < bytes.byteLength; i++) {
-      binary += String.fromCharCode(bytes[i]);
-    }
-    return window.btoa(binary);
+    let binary = "";
+    for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
+    return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
   },
-
-  // Convert Base64 to ArrayBuffer
-  base64ToArrayBuffer: (base64) => {
-    const binary = window.atob(base64);
+  fromBase64Url: (base64url) => {
+    const base64 = base64url.replace(/-/g, "+").replace(/_/g, "/") + "==".slice(0, (4 - (base64url.length % 4)) % 4);
+    const binary = atob(base64);
     const bytes = new Uint8Array(binary.length);
-    for (let i = 0; i < binary.length; i++) {
-      bytes[i] = binary.charCodeAt(i);
-    }
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
     return bytes.buffer;
   },
 
-  // Generate random challenge
-  generateChallenge: () => {
-    const array = new Uint8Array(32);
-    crypto.getRandomValues(array);
-    return array;
+  // data helpers
+  utf8: (str) => new TextEncoder().encode(str),
+  randomBytes: (len = 32) => {
+    const arr = new Uint8Array(len);
+    crypto.getRandomValues(arr);
+    return arr;
   },
 
-  // Register biometric credential
-  registerBiometric: async (username, userDisplayName) => {
-    try {
-      const challenge = WebAuthnHelper.generateChallenge();
-      const userId = WebAuthnHelper.stringToArrayBuffer(username);
+  // RP ID (effective domain)
+  rpId: () => {
+    // Normalize rpId for localhost dev
+    const host = window.location.hostname;
+    if (host === "127.0.0.1") return "127.0.0.1"; // allowed since Chrome 127+, else use 'localhost'
+    return host; // e.g. example.com or localhost
+  },
 
-      const publicKeyCredentialCreationOptions = {
-        challenge: challenge,
+  // Preflight checks to give user-friendly reasons
+  async preflight() {
+    if (!window.isSecureContext) {
+      return { ok: false, reason: "Not secure context. Use HTTPS or http://localhost." };
+    }
+    if (!("PublicKeyCredential" in window)) {
+      return { ok: false, reason: "WebAuthn not supported by this browser." };
+    }
+    try {
+      const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+      if (!available) {
+        return { ok: false, reason: "No platform authenticator available (setup Touch ID / Face ID / Windows Hello)." };
+      }
+    } catch (e) {
+      // continue; some browsers may throw here
+    }
+    return { ok: true };
+  },
+
+  async registerBiometric(username, displayName) {
+    try {
+      const pre = await WebAuthnHelper.preflight();
+      if (!pre.ok) {
+        return { success: false, error: pre.reason };
+      }
+
+      // Use a stable random user handle for this username (<= 64 bytes)
+      const userHandles = JSON.parse(localStorage.getItem("webauthnUserHandles") || "{}");
+      let userIdB64 = userHandles[username];
+      if (!userIdB64) {
+        userIdB64 = WebAuthnHelper.toBase64Url(WebAuthnHelper.randomBytes(32));
+        userHandles[username] = userIdB64;
+        localStorage.setItem("webauthnUserHandles", JSON.stringify(userHandles));
+      }
+      const userId = WebAuthnHelper.fromBase64Url(userIdB64);
+
+      const publicKey = {
+        challenge: WebAuthnHelper.randomBytes(32),
         rp: {
           name: "Igifu Food App",
-          id: window.location.hostname,
+          id: WebAuthnHelper.rpId(),
         },
         user: {
           id: userId,
           name: username,
-          displayName: userDisplayName,
+          displayName,
         },
         pubKeyCredParams: [
-          { alg: -7, type: "public-key" },  // ES256
-          { alg: -257, type: "public-key" }, // RS256
+          { type: "public-key", alg: -7 },   // ES256
+          { type: "public-key", alg: -257 }, // RS256
         ],
         authenticatorSelection: {
           authenticatorAttachment: "platform",
           userVerification: "required",
-          residentKey: "required",
-          requireResidentKey: true,
+          residentKey: "preferred",
         },
-        timeout: 60000,
-        attestation: "direct"
+        timeout: 120000,
+        attestation: "none", // client demo
       };
 
-      const credential = await navigator.credentials.create({
-        publicKey: publicKeyCredentialCreationOptions
-      });
+      // Must be called from a user gesture (button click)
+      const cred = await navigator.credentials.create({ publicKey });
 
-      // Store credential data
-      const credentialData = {
-        credentialId: WebAuthnHelper.arrayBufferToBase64(credential.rawId),
-        publicKey: WebAuthnHelper.arrayBufferToBase64(credential.response.publicKey),
-        username: username,
-        createdAt: new Date().toISOString()
-      };
+      if (!cred) {
+        return { success: false, error: "No credential returned (cancelled?)." };
+      }
 
-      // Store in localStorage (in production, send to server)
-      const storedCredentials = JSON.parse(localStorage.getItem('biometricCredentials') || '{}');
-      storedCredentials[username] = credentialData;
-      localStorage.setItem('biometricCredentials', JSON.stringify(storedCredentials));
+      const credentialId = WebAuthnHelper.toBase64Url(cred.rawId);
+      const stored = JSON.parse(localStorage.getItem("biometricCredentials") || "{}");
+      stored[username] = { credentialId, username, createdAt: new Date().toISOString() };
+      localStorage.setItem("biometricCredentials", JSON.stringify(stored));
 
-      return { success: true, credential: credentialData };
-    } catch (error) {
-      console.error('Biometric registration error:', error);
-      return { success: false, error: error.message };
+      return { success: true, credentialId };
+    } catch (err) {
+      if (err && err.name === "NotAllowedError") {
+        return {
+          success: false,
+          error:
+            "Not allowed or timed out. Ensure you accept the OS prompt, use HTTPS/localhost, and have Face/Touch ID or Windows Hello set up.",
+        };
+      }
+      return { success: false, error: err?.message || "Registration failed." };
     }
   },
 
-  // Authenticate with biometric
-  authenticateBiometric: async (username) => {
+  async authenticateBiometric(username, { conditional = false } = {}) {
     try {
-      const storedCredentials = JSON.parse(localStorage.getItem('biometricCredentials') || '{}');
-      const userCredential = storedCredentials[username];
-
-      if (!userCredential) {
-        throw new Error('No biometric credential found for this user');
+      const pre = await WebAuthnHelper.preflight();
+      if (!pre.ok) {
+        return { success: false, error: pre.reason };
       }
 
-      const challenge = WebAuthnHelper.generateChallenge();
-      
-      const publicKeyCredentialRequestOptions = {
-        challenge: challenge,
-        allowCredentials: [{
-          id: WebAuthnHelper.base64ToArrayBuffer(userCredential.credentialId),
-          type: 'public-key',
-          transports: ['internal']
-        }],
+      const stored = JSON.parse(localStorage.getItem("biometricCredentials") || "{}");
+      const userCred = stored[username];
+
+      const publicKey = {
+        challenge: WebAuthnHelper.randomBytes(32),
+        rpId: WebAuthnHelper.rpId(),
         userVerification: "required",
-        timeout: 60000,
+        timeout: 120000,
       };
 
-      const assertion = await navigator.credentials.get({
-        publicKey: publicKeyCredentialRequestOptions
-      });
-
-      // In production, verify this on the server
-      if (assertion) {
-        return { success: true, assertion };
+      if (userCred?.credentialId) {
+        publicKey.allowCredentials = [
+          {
+            id: WebAuthnHelper.fromBase64Url(userCred.credentialId),
+            type: "public-key",
+            transports: ["internal"],
+          },
+        ];
       }
-      
-      return { success: false, error: 'Authentication failed' };
-    } catch (error) {
-      console.error('Biometric authentication error:', error);
-      return { success: false, error: error.message };
+
+      // Passkeys conditional UI (optional). Only on supported browsers.
+      const getOptions = { publicKey };
+      if (conditional && "mediation" in navigator.credentials) {
+        getOptions.mediation = "conditional";
+      }
+
+      const assertion = await navigator.credentials.get(getOptions);
+
+      if (assertion) return { success: true, assertion };
+      return { success: false, error: "Authentication failed." };
+    } catch (err) {
+      if (err && err.name === "NotAllowedError") {
+        return {
+          success: false,
+          error:
+            "Operation was blocked or timed out. Make sure you didn't dismiss the prompt and that biometrics/Windows Hello are configured.",
+        };
+      }
+      return { success: false, error: err?.message || "Authentication failed." };
     }
   },
 
-  // Check if user has registered biometric
   hasBiometricRegistered: (username) => {
-    const storedCredentials = JSON.parse(localStorage.getItem('biometricCredentials') || '{}');
-    return !!storedCredentials[username];
-  }
+    const stored = JSON.parse(localStorage.getItem("biometricCredentials") || "{}");
+    return !!stored[username];
+  },
 };
 
+// ==================== Page Component ====================
 const SignUpPage = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState("roleSelection");
@@ -182,7 +223,7 @@ const SignUpPage = () => {
   const [biometricRegistered, setBiometricRegistered] = useState(false);
   const [isRegisteringBiometric, setIsRegisteringBiometric] = useState(false);
   const [isAuthenticatingBiometric, setIsAuthenticatingBiometric] = useState(false);
-  
+
   const [fieldStatus, setFieldStatus] = useState({
     username: false,
     email: false,
@@ -190,45 +231,53 @@ const SignUpPage = () => {
     confirmPin: false,
   });
 
-  // Check biometric availability on component mount
   useEffect(() => {
-    const checkBiometric = async () => {
-      if (WebAuthnHelper.isSupported()) {
-        try {
-          // Check if platform authenticator is available
-          const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
-          setBiometricAvailable(available);
-        } catch (error) {
-          console.error('Error checking biometric availability:', error);
-          setBiometricAvailable(false);
-        }
+    (async () => {
+      // HTTPS or localhost
+      if (!window.isSecureContext) {
+        setBiometricAvailable(false);
+        return;
       }
-    };
-    checkBiometric();
+      if (!WebAuthnHelper.isSupported()) {
+        setBiometricAvailable(false);
+        return;
+      }
+      try {
+        const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+        setBiometricAvailable(!!available);
+      } catch {
+        setBiometricAvailable(false);
+      }
+    })();
   }, []);
 
-  // Check if user has biometric registered when username changes
   useEffect(() => {
     if (isLogin && formData.username) {
-      const hasRegistered = WebAuthnHelper.hasBiometricRegistered(formData.username);
-      setBiometricRegistered(hasRegistered);
+      setBiometricRegistered(WebAuthnHelper.hasBiometricRegistered(formData.username));
+    } else {
+      setBiometricRegistered(false);
     }
   }, [formData.username, isLogin]);
 
-  const triggerConfetti = () => {
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 },
-      colors: ['#3B82F6', '#10B981', '#F59E0B', '#EF4444']
-    });
+  const triggerConfetti = async () => {
+    try {
+      const { default: confetti } = await import("canvas-confetti");
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ["#3B82F6", "#10B981", "#F59E0B", "#EF4444"],
+      });
+    } catch {
+      // ignore if not available
+    }
   };
 
   const handleRoleSelection = (role) => {
     setSelectedRole(role);
     setCurrentStep("form");
     setTimeout(() => {
-      document.querySelector('.form-container')?.classList.add('slide-in');
+      document.querySelector(".form-container")?.classList.add("slide-in");
     }, 100);
   };
 
@@ -249,21 +298,13 @@ const SignUpPage = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-    
-    // Real-time validation
-    if (name === 'email' && value) {
-      setFieldStatus(prev => ({ ...prev, email: /\S+@\S+\.\S+/.test(value) }));
-    }
-    if (name === 'username' && value) {
-      setFieldStatus(prev => ({ ...prev, username: value.length >= 3 }));
-    }
-    if (name === 'pin' && value) {
-      setFieldStatus(prev => ({ ...prev, pin: value.length >= 4 }));
-    }
-    if (name === 'confirmPin' && value) {
-      setFieldStatus(prev => ({ ...prev, confirmPin: value === formData.pin }));
-    }
+    const v = name === "pin" || name === "confirmPin" ? value.replace(/\D/g, "") : value;
+    setFormData({ ...formData, [name]: v });
+
+    if (name === "email") setFieldStatus((prev) => ({ ...prev, email: /\S+@\S+\.\S+/.test(v) }));
+    if (name === "username") setFieldStatus((prev) => ({ ...prev, username: v.length >= 3 }));
+    if (name === "pin") setFieldStatus((prev) => ({ ...prev, pin: v.length >= 4 }));
+    if (name === "confirmPin") setFieldStatus((prev) => ({ ...prev, confirmPin: v === formData.pin }));
   };
 
   const handleCheckboxChange = (e) => {
@@ -271,44 +312,69 @@ const SignUpPage = () => {
     setFormData({ ...formData, [name]: checked });
   };
 
-  // Handle biometric registration during signup
   const handleBiometricRegistration = async () => {
     setIsRegisteringBiometric(true);
-    
     toast.loading("Setting up biometric authentication...", { id: "biometric-setup" });
-    
+
     const result = await WebAuthnHelper.registerBiometric(
       formData.username,
-      `${selectedRole === 'student' ? 'Student' : 'Restaurant'}: ${formData.username}`
+      `${selectedRole === "student" ? "Student" : "Restaurant"}: ${formData.username}`
     );
-    
+
     setIsRegisteringBiometric(false);
-    
+
     if (result.success) {
-      toast.success("Biometric authentication enabled successfully!", { id: "biometric-setup" });
+      toast.success("Biometric authentication enabled!", { id: "biometric-setup" });
       setBiometricRegistered(true);
       return true;
     } else {
       toast.error(`Failed to setup biometric: ${result.error}`, { id: "biometric-setup" });
+      toast(
+        (t) => (
+          <div className="text-sm">
+            <div className="font-semibold mb-1">Tips:</div>
+            <ul className="list-disc pl-5 space-y-1">
+              <li>Use HTTPS or http://localhost (secure context)</li>
+              <li>Keep the biometric/Windows Hello prompt open and approve</li>
+              <li>Ensure Face/Touch ID or Windows Hello is set up</li>
+              <li>Avoid private/incognito mode; stay in top-level tab</li>
+              <li>Hostname must match RP ID: {WebAuthnHelper.rpId()}</li>
+            </ul>
+          </div>
+        ),
+        { duration: 6000 }
+      );
       return false;
     }
   };
 
-  // Handle biometric login
   const handleBiometricLogin = async () => {
     setIsAuthenticatingBiometric(true);
-    
     toast.loading("Authenticating with biometric...", { id: "biometric-auth" });
-    
+
     const result = await WebAuthnHelper.authenticateBiometric(formData.username);
-    
+
     setIsAuthenticatingBiometric(false);
-    
+
     if (result.success) {
       toast.success("Biometric authentication successful!", { id: "biometric-auth" });
       return true;
     } else {
       toast.error(`Biometric authentication failed: ${result.error}`, { id: "biometric-auth" });
+      toast(
+        (t) => (
+          <div className="text-sm">
+            <div className="font-semibold mb-1">Tips:</div>
+            <ul className="list-disc pl-5 space-y-1">
+              <li>Do not dismiss the OS prompt; approve it</li>
+              <li>Make sure biometrics are configured on this device</li>
+              <li>Use HTTPS or http://localhost</li>
+              <li>Try again from a non-incognito window</li>
+            </ul>
+          </div>
+        ),
+        { duration: 5000 }
+      );
       return false;
     }
   };
@@ -320,28 +386,23 @@ const SignUpPage = () => {
 
     try {
       if (isLogin) {
-        // LOGIN FLOW
+        // LOGIN
         let isSuccess = false;
-        let path = "/";
+        const path = selectedRole === "student" ? "/igifu-dashboard" : "/restaurentdashboard";
 
-        // Try biometric authentication first if available and registered
-        if (biometricRegistered && biometricAvailable) {
-          const biometricSuccess = await handleBiometricLogin();
-          if (biometricSuccess) {
-            isSuccess = true;
-            path = selectedRole === "student" ? "/igifu-dashboard" : "/restaurentdashboard";
-          }
-        } 
-        
-        // Fall back to PIN authentication
+        // Try biometric first if available and registered
+        if (biometricAvailable && biometricRegistered) {
+          const ok = await handleBiometricLogin();
+          if (ok) isSuccess = true;
+        }
+
+        // Fallback to PIN
         if (!isSuccess) {
-          // Simulate PIN check (replace with actual API call)
-          if (selectedRole === "student" && formData.pin === "student") {
+          const pinOk =
+            (selectedRole === "student" && formData.pin === "student") ||
+            (selectedRole === "restaurant" && formData.pin === "restaurent");
+          if (pinOk) {
             isSuccess = true;
-            path = "/igifu-dashboard";
-          } else if (selectedRole === "restaurant" && formData.pin === "restaurent") {
-            isSuccess = true;
-            path = "/restaurentdashboard";
           } else {
             toast.error("Invalid credentials. Please try again.");
           }
@@ -349,86 +410,76 @@ const SignUpPage = () => {
 
         if (isSuccess) {
           setLoginSuccess(true);
-          toast.success("Welcome back! Redirecting to your dashboard...");
-          setTimeout(() => {
-            navigate(path);
-          }, 2000);
+          toast.success("Welcome back! Redirecting...");
+          setTimeout(() => navigate(path), 1200);
         }
       } else {
-        // SIGNUP FLOW
+        // SIGN UP
         if (formData.pin !== formData.confirmPin) {
           toast.error("PINs do not match! Please re-enter.");
           setIsLoading(false);
           return;
         }
-
         if (!fieldStatus.email) {
           toast.error("Please enter a valid email address.");
           setIsLoading(false);
           return;
         }
 
-        // Save user data (in production, send to server)
+        // Save user (demo)
         const userData = {
           username: formData.username,
           email: formData.email,
           role: selectedRole,
-          createdAt: new Date().toISOString()
+          createdAt: new Date().toISOString(),
+          rememberMe: formData.rememberMe,
         };
-        
-        // Store in localStorage (replace with API call)
-        const users = JSON.parse(localStorage.getItem('users') || '{}');
+        const users = JSON.parse(localStorage.getItem("users") || "{}");
         users[formData.username] = userData;
-        localStorage.setItem('users', JSON.stringify(users));
+        localStorage.setItem("users", JSON.stringify(users));
 
-        // Setup biometric if enabled
+        // Optional biometric setup
         if (formData.enableBiometric && biometricAvailable) {
-          const biometricSuccess = await handleBiometricRegistration();
-          if (!biometricSuccess) {
-            toast.warning("Account created but biometric setup failed. You can enable it later in settings.");
+          const ok = await handleBiometricRegistration();
+          if (!ok) {
+            toast("Account created. You can enable biometric later in settings.", { icon: "ℹ️" });
           }
         }
 
-        // Show success animation
         setRegistrationSuccess(true);
-        triggerConfetti();
+        await triggerConfetti();
         toast.success("🎉 Registration successful! Please login to continue.");
-        
-        // Switch to login after animation
+
         setTimeout(() => {
           setIsLogin(true);
           setRegistrationSuccess(false);
-          setFormData({
-            ...formData,
+          setFormData((prev) => ({
+            ...prev,
             pin: "",
             confirmPin: "",
             enableBiometric: false,
-          });
-        }, 3000);
+          }));
+        }, 1200);
       }
     } catch (error) {
-      console.error('Form submission error:', error);
+      console.error("Form submission error:", error);
       toast.error("An error occurred. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Quick biometric login button
   const handleQuickBiometricLogin = async () => {
     if (!formData.username) {
       toast.error("Please enter your username first");
       return;
     }
-
-    const success = await handleBiometricLogin();
-    if (success) {
+    const ok = await handleBiometricLogin();
+    if (ok) {
       setLoginSuccess(true);
       const path = selectedRole === "student" ? "/igifu-dashboard" : "/restaurentdashboard";
       toast.success("Authentication successful! Redirecting...");
-      setTimeout(() => {
-        navigate(path);
-      }, 1500);
+      setTimeout(() => navigate(path), 1000);
     }
   };
 
@@ -436,6 +487,7 @@ const SignUpPage = () => {
   if (currentStep === "roleSelection") {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 relative py-6 font-sans">
+        <Toaster position="top-center" />
         <button
           onClick={() => navigate("/")}
           className="absolute top-4 left-4 bg-yellow-400 text-gray-800 px-4 py-2 rounded-full font-semibold hover:bg-yellow-500 transition-all transform hover:scale-105 flex items-center shadow-lg"
@@ -443,23 +495,22 @@ const SignUpPage = () => {
           <span className="mr-2">←</span> Back
         </button>
 
-        {/* Animated Header */}
-        <div className="text-center mt-12 animate-fade-in">
-          <h2 className="text-4xl font-bold text-gray-800 mb-2 animate-slide-down">
-            Welcome to Igifu
-          </h2>
-          <p className="text-gray-600 text-lg animate-slide-up">
-            Choose how you want to join us
-          </p>
+        <div className="text-center mt-12">
+          <h2 className="text-4xl font-bold text-gray-800 mb-2">Welcome to Igifu</h2>
+          <p className="text-gray-600 text-lg">Choose how you want to join us</p>
           {biometricAvailable && (
             <div className="mt-3 flex items-center justify-center text-green-600 animate-pulse">
               <FaFingerprint className="mr-2" />
               <span className="text-sm">Biometric authentication available</span>
             </div>
           )}
+          {!window.isSecureContext && (
+            <div className="mt-3 text-xs text-red-600">
+              WebAuthn requires HTTPS or http://localhost
+            </div>
+          )}
         </div>
 
-        {/* Role Selection Cards */}
         <div className="w-full max-w-md mt-8 space-y-4 px-4">
           <button
             onClick={() => handleRoleSelection("student")}
@@ -470,12 +521,8 @@ const SignUpPage = () => {
                 <FaUser className="text-blue-600 text-2xl" />
               </div>
               <div className="text-left">
-                <h3 className="text-xl font-semibold text-gray-800">
-                  I'm a Student
-                </h3>
-                <p className="text-gray-500 text-sm">
-                  Join to order food from restaurants
-                </p>
+                <h3 className="text-xl font-semibold text-gray-800">I'm a Student</h3>
+                <p className="text-gray-500 text-sm">Join to order food from restaurants</p>
               </div>
             </div>
             <FaArrowRight className="text-gray-400 group-hover:text-blue-600 transition-all transform group-hover:translate-x-2" />
@@ -490,19 +537,14 @@ const SignUpPage = () => {
                 <FaUtensils className="text-green-600 text-2xl" />
               </div>
               <div className="text-left">
-                <h3 className="text-xl font-semibold text-gray-800">
-                  I'm a Restaurant Owner
-                </h3>
-                <p className="text-gray-500 text-sm">
-                  Register your restaurant with us
-                </p>
+                <h3 className="text-xl font-semibold text-gray-800">I'm a Restaurant Owner</h3>
+                <p className="text-gray-500 text-sm">Register your restaurant with us</p>
               </div>
             </div>
             <FaArrowRight className="text-gray-400 group-hover:text-green-600 transition-all transform group-hover:translate-x-2" />
           </button>
         </div>
 
-        {/* Security Badge */}
         <div className="mt-8 flex items-center justify-center text-gray-600">
           <MdSecurity className="mr-2 text-xl" />
           <span className="text-sm">Secured with end-to-end encryption</span>
@@ -514,7 +556,7 @@ const SignUpPage = () => {
   // Form Screen
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 relative py-6 font-sans">
-      <Toaster position="top-center" reverseOrder={false} />
+      <Toaster position="top-center" />
 
       <button
         onClick={handleBackToRoleSelection}
@@ -523,10 +565,9 @@ const SignUpPage = () => {
         <span className="mr-2">←</span> Back to role selection
       </button>
 
-      {/* Animated Header */}
       <div className="text-center mt-12 form-container">
         <div className="flex items-center justify-center mb-3">
-          <div className="bg-gradient-to-br from-blue-100 to-blue-200 p-3 rounded-full animate-bounce-slow">
+          <div className="bg-gradient-to-br from-blue-100 to-blue-200 p-3 rounded-full animate-bounce">
             {selectedRole === "student" ? (
               <FaUser className="text-blue-600 text-3xl" />
             ) : (
@@ -560,13 +601,8 @@ const SignUpPage = () => {
         </p>
       </div>
 
-      {/* Enhanced Form */}
-      <form
-        onSubmit={handleSubmit}
-        className="w-full max-w-md mt-6 bg-white p-8 rounded-2xl shadow-2xl space-y-5 form-container"
-      >
-        {/* Registration Success Animation */}
-        {registrationSuccess && (
+      <form onSubmit={handleSubmit} className="w-full max-w-md mt-6 bg-white p-8 rounded-2xl shadow-2xl space-y-5 form-container">
+        {registrationSuccess ? (
           <div className="text-center py-8">
             <div className="success-checkmark mx-auto mb-4">
               <HiCheckCircle className="text-green-500 text-6xl animate-bounce" />
@@ -574,41 +610,47 @@ const SignUpPage = () => {
             <h3 className="text-2xl font-bold text-green-600 mb-2">Registration Successful!</h3>
             <p className="text-gray-600">Redirecting to login...</p>
           </div>
-        )}
-
-        {!registrationSuccess && (
+        ) : (
           <>
-            {/* Username Field */}
+            {/* Username */}
             <div className="relative group">
-              <MdPerson className={`absolute left-3 top-1/2 -translate-y-1/2 transition-colors ${
-                fieldStatus.username && !isLogin ? 'text-green-500' : 'text-gray-400'
-              }`} />
+              <MdPerson
+                className={`absolute left-3 top-1/2 -translate-y-1/2 transition-colors ${
+                  fieldStatus.username && !isLogin ? "text-green-500" : "text-gray-400"
+                }`}
+              />
               <input
                 type="text"
                 placeholder={
-                  isLogin 
-                    ? (selectedRole === 'student' ? 'Username' : 'Restaurant Name')
-                    : (selectedRole === 'student' ? 'Choose a username' : 'Restaurant Name')
+                  isLogin
+                    ? selectedRole === "student"
+                      ? "Username"
+                      : "Restaurant Name"
+                    : selectedRole === "student"
+                    ? "Choose a username"
+                    : "Restaurant Name"
                 }
                 name="username"
                 value={formData.username}
                 onChange={handleChange}
                 className={`w-full px-10 py-3 rounded-full border-2 transition-all focus:ring-2 focus:ring-blue-500 ${
-                  fieldStatus.username && !isLogin ? 'border-green-500' : 'border-gray-300'
+                  fieldStatus.username && !isLogin ? "border-green-500" : "border-gray-300"
                 }`}
                 required
               />
               {fieldStatus.username && !isLogin && (
-                <FaCheck className="absolute right-3 top-1/2 -translate-y-1/2 text-green-500 animate-fade-in" />
+                <FaCheck className="absolute right-3 top-1/2 -translate-y-1/2 text-green-500" />
               )}
             </div>
 
-            {/* Email Field (Sign up only) */}
+            {/* Email (Signup only) */}
             {!isLogin && (
               <div className="relative group">
-                <MdEmail className={`absolute left-3 top-1/2 -translate-y-1/2 transition-colors ${
-                  fieldStatus.email ? 'text-green-500' : 'text-gray-400'
-                }`} />
+                <MdEmail
+                  className={`absolute left-3 top-1/2 -translate-y-1/2 transition-colors ${
+                    fieldStatus.email ? "text-green-500" : "text-gray-400"
+                  }`}
+                />
                 <input
                   type="email"
                   placeholder="Enter your email"
@@ -616,12 +658,12 @@ const SignUpPage = () => {
                   value={formData.email}
                   onChange={handleChange}
                   className={`w-full px-10 py-3 rounded-full border-2 transition-all focus:ring-2 focus:ring-blue-500 ${
-                    fieldStatus.email ? 'border-green-500' : 'border-gray-300'
+                    fieldStatus.email ? "border-green-500" : "border-gray-300"
                   }`}
                   required
                 />
                 {fieldStatus.email && (
-                  <FaCheck className="absolute right-3 top-1/2 -translate-y-1/2 text-green-500 animate-fade-in" />
+                  <FaCheck className="absolute right-3 top-1/2 -translate-y-1/2 text-green-500" />
                 )}
               </div>
             )}
@@ -647,55 +689,59 @@ const SignUpPage = () => {
                     </>
                   )}
                 </button>
-                <p className="text-center text-xs text-gray-500 mt-2">
-                  Or enter your PIN below
-                </p>
+                <p className="text-center text-xs text-gray-500 mt-2">Or enter your PIN below</p>
               </div>
             )}
 
-            {/* PIN Field */}
+            {/* PIN */}
             <div className="relative group">
-              <FaLock className={`absolute left-3 top-1/2 -translate-y-1/2 transition-colors ${
-                fieldStatus.pin && !isLogin ? 'text-green-500' : 'text-gray-400'
-              }`} />
+              <FaLock
+                className={`absolute left-3 top-1/2 -translate-y-1/2 transition-colors ${
+                  fieldStatus.pin && !isLogin ? "text-green-500" : "text-gray-400"
+                }`}
+              />
               <input
                 type="password"
+                inputMode="numeric"
                 placeholder={isLogin ? "Enter your PIN" : "Create a secure PIN (min 4 digits)"}
                 name="pin"
                 value={formData.pin}
                 onChange={handleChange}
                 className={`w-full px-10 py-3 rounded-full border-2 transition-all focus:ring-2 focus:ring-blue-500 ${
-                  fieldStatus.pin && !isLogin ? 'border-green-500' : 'border-gray-300'
+                  fieldStatus.pin && !isLogin ? "border-green-500" : "border-gray-300"
                 }`}
                 required={!isLogin || !biometricRegistered}
               />
               <div className="group relative inline-block">
                 <FaQuestionCircle className="absolute right-3 top-1/2 -translate-y-1/2 text-yellow-500 cursor-help" />
                 <div className="invisible group-hover:visible absolute right-0 top-8 bg-gray-800 text-white text-xs rounded-lg p-2 w-48 z-10">
-                  PIN must be at least 4 characters
+                  PIN must be at least 4 digits
                 </div>
               </div>
             </div>
 
-            {/* Confirm PIN Field (Sign up only) */}
+            {/* Confirm PIN (Signup only) */}
             {!isLogin && (
               <div className="relative group">
-                <FaShieldAlt className={`absolute left-3 top-1/2 -translate-y-1/2 transition-colors ${
-                  fieldStatus.confirmPin ? 'text-green-500' : 'text-gray-400'
-                }`} />
+                <FaShieldAlt
+                  className={`absolute left-3 top-1/2 -translate-y-1/2 transition-colors ${
+                    fieldStatus.confirmPin ? "text-green-500" : "text-gray-400"
+                  }`}
+                />
                 <input
                   type="password"
+                  inputMode="numeric"
                   placeholder="Confirm your PIN"
                   name="confirmPin"
                   value={formData.confirmPin}
                   onChange={handleChange}
                   className={`w-full px-10 py-3 rounded-full border-2 transition-all focus:ring-2 focus:ring-blue-500 ${
-                    fieldStatus.confirmPin ? 'border-green-500' : 'border-gray-300'
+                    fieldStatus.confirmPin ? "border-green-500" : "border-gray-300"
                   }`}
                   required
                 />
                 {fieldStatus.confirmPin && (
-                  <FaCheck className="absolute right-3 top-1/2 -translate-y-1/2 text-green-500 animate-fade-in" />
+                  <FaCheck className="absolute right-3 top-1/2 -translate-y-1/2 text-green-500" />
                 )}
               </div>
             )}
@@ -710,12 +756,9 @@ const SignUpPage = () => {
                   onChange={handleCheckboxChange}
                   className="w-5 h-5 accent-blue-600 cursor-pointer"
                 />
-                <span className="text-gray-700 group-hover:text-gray-900 transition-colors">
-                  Remember me
-                </span>
+                <span className="text-gray-700 group-hover:text-gray-900 transition-colors">Remember me</span>
               </label>
 
-              {/* Biometric Setup Option (Sign up only) */}
               {!isLogin && biometricAvailable && (
                 <div className="bg-gradient-to-r from-blue-50 to-green-50 p-4 rounded-xl border border-blue-200">
                   <label className="flex items-center space-x-3 cursor-pointer group">
@@ -728,29 +771,24 @@ const SignUpPage = () => {
                     />
                     <FaFingerprint className="text-green-600 text-xl" />
                     <div className="flex-1">
-                      <span className="text-gray-700 font-semibold block">
-                        Enable Biometric Login
-                      </span>
-                      <span className="text-gray-500 text-xs">
-                        Use fingerprint, Face ID, or Windows Hello for quick access
-                      </span>
+                      <span className="text-gray-700 font-semibold block">Enable Biometric Login</span>
+                      <span className="text-gray-500 text-xs">Use fingerprint, Face ID, or Windows Hello</span>
                     </div>
                   </label>
                 </div>
               )}
 
-              {/* No biometric message */}
               {!biometricAvailable && (
                 <div className="bg-yellow-50 p-3 rounded-xl border border-yellow-200 flex items-center space-x-2">
                   <FaExclamationTriangle className="text-yellow-600" />
                   <span className="text-sm text-gray-700">
-                    Biometric authentication not available on this device
+                    Biometric authentication not available on this device (requires HTTPS and a configured platform authenticator).
                   </span>
                 </div>
               )}
             </div>
 
-            {/* Submit Button */}
+            {/* Submit */}
             <button
               type="submit"
               disabled={isLoading || loginSuccess || isRegisteringBiometric || isAuthenticatingBiometric}
@@ -763,9 +801,11 @@ const SignUpPage = () => {
                 <>
                   <FaSpinner className="animate-spin text-xl mr-2" />
                   <span>
-                    {isRegisteringBiometric ? "Setting up biometric..." : 
-                     isAuthenticatingBiometric ? "Authenticating..." : 
-                     "Processing..."}
+                    {isRegisteringBiometric
+                      ? "Setting up biometric..."
+                      : isAuthenticatingBiometric
+                      ? "Authenticating..."
+                      : "Processing..."}
                   </span>
                 </>
               ) : loginSuccess ? (
@@ -790,7 +830,6 @@ const SignUpPage = () => {
               )}
             </button>
 
-            {/* Terms and Conditions */}
             {!isLogin && (
               <p className="text-center text-gray-500 text-xs">
                 By creating an account, you agree to our{" "}
@@ -804,7 +843,6 @@ const SignUpPage = () => {
               </p>
             )}
 
-            {/* Forgot PIN */}
             {isLogin && (
               <div className="text-center">
                 <a href="/forgot-pin" className="text-blue-600 text-sm hover:underline">
@@ -813,7 +851,6 @@ const SignUpPage = () => {
               </div>
             )}
 
-            {/* Security Info */}
             <div className="flex items-center justify-center text-gray-500 text-xs mt-4">
               <MdSecurity className="mr-1" />
               <span>Your data is encrypted and secure</span>
@@ -822,8 +859,7 @@ const SignUpPage = () => {
         )}
       </form>
 
-      {/* Role Switch Option */}
-      <div className="text-center mt-6 animate-fade-in">
+      <div className="text-center mt-6">
         {selectedRole === "student" ? (
           <p className="text-gray-600 text-sm">
             Are you a restaurant owner?{" "}
@@ -836,9 +872,7 @@ const SignUpPage = () => {
           </p>
         ) : (
           <div>
-            <p className="text-gray-600 text-sm mb-3">
-              Need help with restaurant registration?
-            </p>
+            <p className="text-gray-600 text-sm mb-3">Need help with restaurant registration?</p>
             <button className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-6 py-2 rounded-full font-semibold hover:from-blue-600 hover:to-indigo-700 transition-all transform hover:scale-105 flex items-center mx-auto shadow-lg">
               Get Support <FaArrowRight className="ml-2" />
             </button>
@@ -846,71 +880,9 @@ const SignUpPage = () => {
         )}
       </div>
 
-      {/* Styles */}
-      <style jsx>{`
-        @keyframes slide-down {
-          from {
-            opacity: 0;
-            transform: translateY(-20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        @keyframes slide-up {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        @keyframes fade-in {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
-        }
-
-        @keyframes bounce-slow {
-          0%, 100% {
-            transform: translateY(0);
-          }
-          50% {
-            transform: translateY(-10px);
-          }
-        }
-
-        .animate-slide-down {
-          animation: slide-down 0.5s ease-out;
-        }
-
-        .animate-slide-up {
-          animation: slide-up 0.5s ease-out;
-        }
-
-        .animate-fade-in {
-          animation: fade-in 0.3s ease-out;
-        }
-
-        .animate-bounce-slow {
-          animation: bounce-slow 2s infinite;
-        }
-
-        .form-container {
-          animation: slide-up 0.4s ease-out;
-        }
-
-        .slide-in {
-          animation: slide-up 0.4s ease-out;
-        }
+      <style>{`
+        @keyframes slide-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .form-container { animation: slide-up 0.4s ease-out; }
       `}</style>
     </div>
   );

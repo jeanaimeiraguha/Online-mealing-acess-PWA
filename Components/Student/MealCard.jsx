@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useMemo } from "react";
 import {
   FaBell, FaSearch, FaUtensils, FaWallet, FaGift, FaMoneyBill,
@@ -131,7 +130,7 @@ const LowBalanceWarning = ({ balance, onTopUp }) => {
             {isCritical ? '🚨 Critical: Low Balance!' : '⚠️ Balance Running Low'}
           </h4>
           <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-            You only have <strong>RWF {formatAmount(balance)}</strong> left. Top up now to continue enjoying meals.
+            You only have <strong>RWF {formatAmount(balance)}</strong> left in your Meal Wallet. Top up to continue enjoying meals.
           </p>
           <motion.button
             whileTap={tapAnimation}
@@ -149,7 +148,7 @@ const LowBalanceWarning = ({ balance, onTopUp }) => {
   );
 };
 
-// ==================== MEAL PLAN CARD ====================
+// ==================== MEAL PLAN CARD (IMPROVED) ====================
 const MealPlanCard = ({ plan, onUseMeal, onViewDetails, onShare }) => {
   const totalMeals = plan.totalMeals;
   const usedCount = plan.usedMeals.length;
@@ -245,8 +244,9 @@ const MealPlanCard = ({ plan, onUseMeal, onViewDetails, onShare }) => {
   );
 };
 
-// ==================== DIGITAL MEAL CARD ====================
-const DigitalMealCard = ({ selectedCard, wallets, isLocked, onBuyCard, onTopUp, onHistory, onExchange, onUnlock }) => {
+
+// ==================== DIGITAL MEAL CARD (IMPROVED) ====================
+const DigitalMealCard = ({ selectedCard, wallets, isLocked, onBuyCard, onTopUp, onExchange, onUnlock }) => {
   const [isFlipped, setIsFlipped] = useState(false);
   const totalBalance = wallets.meal + wallets.flexie;
 
@@ -375,6 +375,7 @@ const DigitalMealCard = ({ selectedCard, wallets, isLocked, onBuyCard, onTopUp, 
     </div>
   );
 };
+
 
 // ==================== RESTAURANT DETAILS MODAL ====================
 const RestaurantDetailsModal = ({ restaurant, onClose }) => {
@@ -516,7 +517,7 @@ const RestaurantDetailsModal = ({ restaurant, onClose }) => {
   );
 };
 
-// ==================== WALLET EXCHANGE MODAL ====================
+// ==================== WALLET EXCHANGE MODAL (NEW) ====================
 const WalletExchangeModal = ({ wallets, onExchange, onClose }) => {
   const [fromWallet, setFromWallet] = useState('meal');
   const [toWallet, setToWallet] = useState('flexie');
@@ -653,8 +654,6 @@ const ShareMealModal = ({ plan, onShare, onClose }) => {
   );
 };
 
-// Continue in next message due to length...
-
 // ==================== PAYMENT SUCCESS MODAL ====================
 const PaymentSuccessModal = ({ amount, onClose }) => {
   useEffect(() => {
@@ -669,7 +668,7 @@ const PaymentSuccessModal = ({ amount, onClose }) => {
           <FaCheckCircle className="text-white text-4xl" />
         </motion.div>
         <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Payment Successful!</h3>
-        <p className="text-gray-600 dark:text-gray-400 mb-2">RWF {formatAmount(amount)} added</p>
+        <p className="text-gray-600 dark:text-gray-400 mb-2">RWF {formatAmount(amount)} added to your Meal Wallet.</p>
         <motion.div initial={{ width: 0 }} animate={{ width: '100%' }} transition={{ duration: 2.5 }} className="h-1 bg-green-500 rounded-full mt-4" />
       </motion.div>
     </motion.div>
@@ -888,7 +887,7 @@ const RestaurantCard = ({ restaurant, index, onToggleFav, onOrder }) => {
   );
 };
 
-// ==================== ENHANCED PAYMENT MODAL WITH FEE & OTP ====================
+// ==================== ENHANCED PAYMENT MODAL (IMPROVED) ====================
 const EnhancedPaymentModal = ({ defaultAmount = 10000, onPay, onClose, processing, setProcessing }) => {
   const [paymentMethod, setPaymentMethod] = useState('mtn');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -903,8 +902,8 @@ const EnhancedPaymentModal = ({ defaultAmount = 10000, onPay, onClose, processin
 
   const fees = {
     'no-fee': 0,
-    'Monthly': Math.ceil(amount * 0.01),
-    'half-month': Math.ceil(amount * 0.02),
+    'half-month': Math.ceil(amount * 0.01),
+    'monthly': Math.ceil(amount * 0.02),
   };
 
   const totalAmount = amount + fees[feeOption];
@@ -1067,12 +1066,12 @@ const EnhancedPaymentModal = ({ defaultAmount = 10000, onPay, onClose, processin
           </div>
 
           <div>
-            <label className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-3 block">Payment  Options</label>
+            <label className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-3 block">Processing Fee Options</label>
             <div className="space-y-2">
               {[
-                { key: 'no-fee', label: 'No Fee ', desc: '' },
-                { key: 'month', label: 'month', desc: ' ', fee: fees.standard },
-                { key: 'half month', label: 'half month', desc: '', fee: fees.express },
+                { key: 'no-fee', label: 'No Fee', desc: 'Standard processing', fee: fees['no-fee'] },
+                { key: 'half-month', label: 'Half Month Fee', desc: 'Slightly faster', fee: fees['half-month'] },
+                { key: 'monthly', label: 'Monthly Fee', desc: 'Priority processing', fee: fees['monthly'] },
               ].map(option => (
                 <motion.button
                   key={option.key}
@@ -1087,9 +1086,7 @@ const EnhancedPaymentModal = ({ defaultAmount = 10000, onPay, onClose, processin
                     <div className="font-bold text-gray-900 dark:text-white text-sm">{option.label}</div>
                     <div className="text-xs text-gray-600 dark:text-gray-400">{option.desc}</div>
                   </div>
-                  {option.fee !== undefined && (
-                    <div className="text-sm font-bold text-blue-600">+RWF {formatAmount(option.fee)}</div>
-                  )}
+                  <div className="text-sm font-bold text-blue-600">+RWF {formatAmount(option.fee)}</div>
                 </motion.button>
               ))}
             </div>
@@ -1163,8 +1160,6 @@ const EnhancedPaymentModal = ({ defaultAmount = 10000, onPay, onClose, processin
     </motion.div>
   );
 };
-
-// Continue in next message with Unlock, Android, Restaurants, Plan Details and Main App...
 
 // ==================== UNLOCK CARD MODAL ====================
 const UnlockCardModal = ({ onSuccess, onCancel }) => {
@@ -1523,7 +1518,7 @@ function IgifuDashboardMainApp() {
 
   const [wallets, setWallets] = useState(() => {
     const saved = localStorage.getItem("wallets");
-    return saved ? JSON.parse(saved) : { meal: 50000, flexie: 25000 };
+    return saved ? JSON.parse(saved) : { meal: 5000, flexie: 2000 };
   });
 
   const [purchasedPlans, setPurchasedPlans] = useState(() => {
@@ -1600,16 +1595,17 @@ function IgifuDashboardMainApp() {
     setShowEnhancedPayment(false);
     setPaymentProcessing(false);
     setShowPaymentSuccess(true);
-    setIsCardLocked(true);
-    showToast(`RWF ${formatAmount(amount)} added! Card locked for security.`, "success");
+    showToast(`RWF ${formatAmount(amount)} has been added to your meal wallet.`, "success");
   };
 
   const handlePaymentSuccessClose = () => {
     setShowPaymentSuccess(false);
     if (selectedCard === "No Card") {
       setSelectedCard("Meal Card");
+      setIsCardLocked(true); // Lock the card on first purchase for security demo
+      showToast("Card purchased! Please unlock it to use.", "info");
+      setTimeout(() => setShowUnlockModal(true), 500); // Prompt unlock
     }
-    setShowUnlockModal(true);
   };
 
   const handleUnlockSuccess = () => {
@@ -1685,6 +1681,7 @@ function IgifuDashboardMainApp() {
 
     if (wallets.meal < total) {
       showToast("Insufficient meal wallet balance. Please top up.", "warn");
+      handleTopUp();
       return;
     }
 
@@ -1760,7 +1757,6 @@ function IgifuDashboardMainApp() {
               isLocked={isCardLocked}
               onBuyCard={handleBuyCardClick}
               onTopUp={handleTopUp}
-              onHistory={() => showToast('Transaction history coming soon!', 'info')}
               onExchange={() => {
                 if (isCardLocked) {
                   showToast("Please unlock your card first", "warn");
@@ -1776,17 +1772,22 @@ function IgifuDashboardMainApp() {
           {selectedCard === "Meal Card" && (
             <>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mb-6">
-                {[
-                  // { icon: FaQrcode, label: 'Scan & Pay', action: () => showToast('Scan & Pay coming soon!', 'info') },
-                  // { icon: FaHistory, label: 'History', action: () => showToast('History coming soon!', 'info') },
-                  { icon: FaCreditCard, label: 'Top Up', action: handleTopUp },
-                  // { icon: FaGift, label: 'Rewards', action: () => showToast('Rewards coming soon!', 'info') },
-                ].map((action) => (
-                  <motion.button key={action.label} whileHover={hoverScale} whileTap={tapAnimation} onClick={action.action} className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl p-3 sm:p-4 border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-all">
-                    <action.icon className="text-xl sm:text-2xl text-blue-500 mb-1 sm:mb-2 mx-auto" />
-                    <div className="text-xs sm:text-sm font-bold text-gray-700 dark:text-gray-300">{action.label}</div>
+                 <motion.button key="TopUp" whileHover={hoverScale} whileTap={tapAnimation} onClick={handleTopUp} className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl p-3 sm:p-4 border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-all">
+                    <FaCreditCard className="text-xl sm:text-2xl text-blue-500 mb-1 sm:mb-2 mx-auto" />
+                    <div className="text-xs sm:text-sm font-bold text-gray-700 dark:text-gray-300">Top Up</div>
                   </motion.button>
-                ))}
+                  <motion.button key="History" whileHover={hoverScale} whileTap={tapAnimation} onClick={() => showToast('History coming soon!', 'info')} className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl p-3 sm:p-4 border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-all">
+                    <FaHistory className="text-xl sm:text-2xl text-purple-500 mb-1 sm:mb-2 mx-auto" />
+                    <div className="text-xs sm:text-sm font-bold text-gray-700 dark:text-gray-300">History</div>
+                  </motion.button>
+                   <motion.button key="Scan" whileHover={hoverScale} whileTap={tapAnimation} onClick={() => showToast('Scan & Pay coming soon!', 'info')} className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl p-3 sm:p-4 border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-all">
+                    <FaQrcode className="text-xl sm:text-2xl text-green-500 mb-1 sm:mb-2 mx-auto" />
+                    <div className="text-xs sm:text-sm font-bold text-gray-700 dark:text-gray-300">Scan & Pay</div>
+                  </motion.button>
+                   <motion.button key="Rewards" whileHover={hoverScale} whileTap={tapAnimation} onClick={() => showToast('Rewards coming soon!', 'info')} className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl p-3 sm:p-4 border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-all">
+                    <FaGift className="text-xl sm:text-2xl text-yellow-500 mb-1 sm:mb-2 mx-auto" />
+                    <div className="text-xs sm:text-sm font-bold text-gray-700 dark:text-gray-300">Rewards</div>
+                  </motion.button>
               </div>
 
               {purchasedPlans.length > 0 && (
@@ -1989,7 +1990,7 @@ function IgifuDashboardMainApp() {
         {showShareModal && selectedSharePlan && <ShareMealModal plan={selectedSharePlan} onShare={handleShareMeal} onClose={() => { setShowShareModal(false); setSelectedSharePlan(null); }} />}
         {showPlanDetails && selectedPlanDetails && <PlanDetailsModal plan={selectedPlanDetails} onClose={() => { setShowPlanDetails(false); setSelectedPlanDetails(null); }} onUseMeal={handleUseMeal} />}
 
-        {/* Order Modal */}
+        {/* Order Modal (NEW) */}
         {showOrderModal && selectedRestaurant && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setShowOrderModal(false)}>
             <motion.div variants={modalMotion} initial="initial" animate="animate" exit="exit" onClick={e => e.stopPropagation()} className="w-full max-w-md bg-white dark:bg-gray-900 rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl max-h-[90vh] overflow-y-auto">
@@ -2053,20 +2054,3 @@ function IgifuDashboardMainApp() {
 }
 
 export default IgifuDashboardMainApp;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
