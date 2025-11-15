@@ -807,14 +807,24 @@
 // };
 
 // export default WelcomePage;
-
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
 const Home = () => {
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openFaqIndex, setOpenFaqIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
+
+  // Loading animation
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Navigation Links
   const navLinks = [
@@ -994,8 +1004,66 @@ const Home = () => {
   const featureCardBg = isDarkMode ? 'bg-gradient-to-br from-gray-800/40 to-gray-900/40 border-gray-700/50 hover:border-gray-600/50' : 'bg-white border-gray-200 hover:border-gray-400';
   const bgSection = isDarkMode ? 'bg-gradient-to-b from-transparent to-gray-900/20' : 'bg-gray-50';
 
+  // Loading Screen
+  if (isLoading) {
+    return (
+      <motion.div
+        initial={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 bg-gradient-to-br from-[#0f1621] via-[#1a2332] to-[#0f1621] flex items-center justify-center z-50"
+      >
+        <div className="text-center">
+          <motion.div
+            animate={{
+              scale: [1, 1.2, 1],
+              rotate: [0, 360],
+            }}
+            transition={{
+              duration: 1.5,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+            className="w-20 h-20 mx-auto mb-6"
+          >
+            <div className="w-full h-full bg-gradient-to-br from-purple-600 to-blue-600 rounded-2xl flex items-center justify-center">
+              <span className="text-4xl font-bold text-white">I</span>
+            </div>
+          </motion.div>
+          <motion.h2
+            animate={{ opacity: [0.5, 1, 0.5] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+            className="text-3xl font-bold text-white mb-2"
+          >
+            Igifu
+          </motion.h2>
+          <motion.div
+            className="flex space-x-2 justify-center"
+          >
+            {[0, 1, 2].map((i) => (
+              <motion.div
+                key={i}
+                animate={{ y: [0, -10, 0] }}
+                transition={{
+                  duration: 0.6,
+                  repeat: Infinity,
+                  delay: i * 0.2,
+                }}
+                className="w-3 h-3 bg-orange-500 rounded-full"
+              />
+            ))}
+          </motion.div>
+        </div>
+      </motion.div>
+    );
+  }
+
   return (
-    <div className={`${isDarkMode ? 'bg-gradient-to-br from-[#0f1621] via-[#1a2332] to-[#0f1621] text-white' : 'bg-white text-gray-900'} min-h-screen transition-colors duration-300`}>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className={`${isDarkMode ? 'bg-gradient-to-br from-[#0f1621] via-[#1a2332] to-[#0f1621] text-white' : 'bg-white text-gray-900'} min-h-screen transition-colors duration-300`}
+    >
       {/* ==================== HEADER ==================== */}
       <header className={`border-b ${borderColor} sticky top-0 z-50 backdrop-blur-md ${isDarkMode ? '' : 'bg-white/95'}`}>
         <nav className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -1048,12 +1116,12 @@ const Home = () => {
 
             {/* Desktop Buttons */}
             <div className="hidden md:flex items-center space-x-4">
-              <button className={`${textColor} transition`}>
+              <Link to="/login" className={`${textColor} transition`}>
                 Log In
-              </button>
-              <button className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-2 rounded-lg hover:opacity-90 transition shadow-lg">
+              </Link>
+              <Link to="/signup" className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-2 rounded-lg hover:opacity-90 transition shadow-lg">
                 Get Started
-              </button>
+              </Link>
             </div>
           </div>
         </nav>
@@ -1072,12 +1140,12 @@ const Home = () => {
                   {link.label}
                 </a>
               ))}
-              <button className={`w-full py-2 rounded-lg ${isDarkMode ? 'bg-gray-800' : 'bg-gray-200'}`}>
+              <Link to="/login" className={`w-full py-2 rounded-lg ${isDarkMode ? 'bg-gray-800' : 'bg-gray-200'} block text-center`}>
                 Log In
-              </button>
-              <button className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-2 rounded-lg hover:opacity-90 transition">
+              </Link>
+              <Link to="/signup" className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-2 rounded-lg hover:opacity-90 transition block text-center">
                 Get Started
-              </button>
+              </Link>
             </div>
           </div>
         )}
@@ -1106,15 +1174,15 @@ const Home = () => {
             </p>
 
             <div className="flex flex-wrap gap-4 mb-8">
-              <button className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-8 py-3 rounded-lg hover:opacity-90 transition flex items-center space-x-2 shadow-lg">
+              <Link to="/signup" className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-8 py-3 rounded-lg hover:opacity-90 transition flex items-center space-x-2 shadow-lg">
                 <span>Get your Free Card</span>
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
-              </button>
-              <button className={`border ${isDarkMode ? 'border-gray-600 hover:border-gray-500' : 'border-gray-400 hover:border-gray-600'} px-8 py-3 rounded-lg transition`}>
+              </Link>
+              <Link to="/login" className={`border ${isDarkMode ? 'border-gray-600 hover:border-gray-500' : 'border-gray-400 hover:border-gray-600'} px-8 py-3 rounded-lg transition`}>
                 Log In
-              </button>
+              </Link>
             </div>
 
             {/* Social Proof */}
@@ -1166,12 +1234,12 @@ const Home = () => {
                 </div>
 
                 <div className="flex gap-4 pt-4">
-                  <button className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 rounded-lg hover:opacity-90 transition">
+                  <Link to="/signup" className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 rounded-lg hover:opacity-90 transition text-center">
                     Get this Card for free
-                  </button>
-                  <button className={`border ${isDarkMode ? 'border-gray-600 hover:border-gray-500' : 'border-gray-400 hover:border-gray-600'} px-6 py-3 rounded-lg transition`}>
+                  </Link>
+                  <Link to="/login" className={`border ${isDarkMode ? 'border-gray-600 hover:border-gray-500' : 'border-gray-400 hover:border-gray-600'} px-6 py-3 rounded-lg transition`}>
                     Log In
-                  </button>
+                  </Link>
                 </div>
               </div>
 
@@ -1331,9 +1399,9 @@ const Home = () => {
           <p className={`${textSecondary} text-lg mb-8 max-w-2xl mx-auto`}>
             Join thousands of students who are already enjoying fast, secure, and hassle-free dining payments.
           </p>
-          <button className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-8 py-4 rounded-lg hover:opacity-90 transition font-bold text-lg shadow-lg hover:scale-105">
+          <Link to="/signup" className="inline-block bg-gradient-to-r from-purple-600 to-blue-600 text-white px-8 py-4 rounded-lg hover:opacity-90 transition font-bold text-lg shadow-lg hover:scale-105">
             Get Started Now
-          </button>
+          </Link>
         </div>
       </section>
 
@@ -1396,11 +1464,11 @@ const Home = () => {
 
           {/* Copyright */}
           <div className={`text-center pt-8 border-t ${borderColor} ${textSecondary} text-sm`}>
-            <p>&copy; 2024 Igifu. All rights reserved.</p>
+            <p>&copy; {new Date().getFullYear()} Igifu. All rights reserved.</p>
           </div>
         </div>
       </footer>
-    </div>
+    </motion.div>
   );
 };
 
