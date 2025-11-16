@@ -190,7 +190,7 @@ const SignUpPage = () => {
     email: "",
     pin: "",
     confirmPin: "",
-    rememberMe: false,
+    rememberMe: true,
     enableBiometric: false,
   });
 
