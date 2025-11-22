@@ -43,17 +43,17 @@ const WalletExchangeModal = ({ wallets, onExchange, onClose, onBuyIgifu }) => {
         {view === 'menu' && (
           <>
             <h3 className="text-2xl font-bold text-center mb-6 text-gray-900 dark:text-white">Wallet & Actions</h3>
-            <div className="space-y-3">
+            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
               {menuItems.map((item, index) => (
                 <motion.button
                   key={index}
                   whileTap={tapAnimation}
                   onClick={item.action}
-                  className="w-full flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-all"
+                  className={`w-full flex items-center justify-between p-3 text-left transition-all hover:bg-gray-100 dark:hover:bg-gray-700/50 ${index < menuItems.length - 1 ? 'border-b border-gray-200 dark:border-gray-700' : ''}`}
                 >
-                  <div className="flex items-center gap-4">
-                    <div className="text-gray-500 dark:text-gray-400 text-xl">{item.icon}</div>
-                    <span className="font-semibold text-gray-800 dark:text-gray-200">{item.title}</span>
+                  <div className="flex items-center gap-3">
+                    <div className="text-gray-500 dark:text-gray-400 text-base">{item.icon}</div>
+                    <span className="font-medium text-gray-800 dark:text-gray-200">{item.title}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     {item.soon && <span className="text-xs font-bold text-purple-500 bg-purple-100 dark:bg-purple-900/50 px-2 py-1 rounded-full">Soon</span>}
