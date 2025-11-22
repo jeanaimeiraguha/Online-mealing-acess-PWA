@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   FaBell, FaSearch, FaUtensils, FaWallet, FaGift, FaMoneyBill,
   FaEllipsisH, FaUserCircle
@@ -6,245 +6,27 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 
 import { tapAnimation, hoverScale } from './utils/animations';
-import { getMealCount, formatAmount } from './utils/helpers';
-
-import AndroidPromptModal from './modals/AndroidPromptModal';
-import EnhancedPaymentModal from './modals/EnhancedPaymentModal';
-import PaymentSuccessModal from './modals/PaymentSuccessModal';
-import UnlockCardModal from './modals/UnlockCardModal';
-import WalletExchangeModal from './modals/WalletExchangeModal';
-import ShareMealModal from './modals/ShareMealModal';
-import PlanDetailsModal from './modals/PlanDetailsModal';
 
 import MyIgifuPage from './pages/MyIgifuPage';
 import RestozPage from './pages/RestozPage';
 import EarnPage from './pages/EarnPage';
 import LoansPage from './pages/LoansPage';
 import MorePage from './pages/MorePage';
+import useApp from "./useApp";
+import Modals from "./Modals";
 
 function IgifuDashboardMainApp() {
-  const [selectedCard, setSelectedCard] = useState(() => localStorage.getItem("selectedCard") || "No Card");
-  const [isCardLocked, setIsCardLocked] = useState(() => localStorage.getItem("cardLocked") === "true");
-  const [activePage, setActivePage] = useState("Restoz");
-  const [darkMode, setDarkMode] = useState(() => localStorage.getItem("theme") === "dark");
-  const [greeting, setGreeting] = useState("Hello");
-  const [toast, setToast] = useState(null);
-
-  const [wallets, setWallets] = useState(() => {
-    const saved = localStorage.getItem("wallets");
-    return saved ? JSON.parse(saved) : { meal: 5000, flexie: 2000 };
-  });
-
-  const [purchasedPlans, setPurchasedPlans] = useState(() => {
-    const saved = localStorage.getItem("purchasedPlans");
-    return saved ? JSON.parse(saved) : [];
-  });
-
-  const [showEnhancedPayment, setShowEnhancedPayment] = useState(false);
-  const [paymentProcessing, setPaymentProcessing] = useState(false);
-  const [paymentDefaultAmount, setPaymentDefaultAmount] = useState(10000);
-  const [showPaymentSuccess, setShowPaymentSuccess] = useState(false);
-  const [lastPaymentAmount, setLastPaymentAmount] = useState(0);
-  const [showUnlockModal, setShowUnlockModal] = useState(false);
-  const [showExchangeModal, setShowExchangeModal] = useState(false);
-  const [showShareModal, setShowShareModal] = useState(false);
-  const [selectedSharePlan, setSelectedSharePlan] = useState(null);
-  const [showOrderModal, setShowOrderModal] = useState(false);
-  const [selectedRestaurant, setSelectedRestaurant] = useState(null);
-  const [selectedPlan, setSelectedPlan] = useState(null);
-  const [planQty, setPlanQty] = useState(1);
-  const [orderProcessing, setOrderProcessing] = useState(false);
-  const [showPlanDetails, setShowPlanDetails] = useState(false);
-  const [selectedPlanDetails, setSelectedPlanDetails] = useState(null);
-  const [showAndroidPrompt, setShowAndroidPrompt] = useState(false);
-
-  useEffect(() => {
-    const hours = new Date().getHours();
-    if (hours < 12) setGreeting("Good Morning ☀️");
-    else if (hours < 18) setGreeting("Good Afternoon 🌤️");
-    else setGreeting("Good Evening 🌙");
-  }, []);
-
-  useEffect(() => {
-    document.documentElement.classList.toggle("dark", darkMode);
-    localStorage.setItem("theme", darkMode ? "dark" : "light");
-  }, [darkMode]);
-
-  useEffect(() => {
-    localStorage.setItem("selectedCard", selectedCard);
-    localStorage.setItem("cardLocked", isCardLocked.toString());
-    localStorage.setItem("wallets", JSON.stringify(wallets));
-    localStorage.setItem("purchasedPlans", JSON.stringify(purchasedPlans));
-  }, [selectedCard, isCardLocked, wallets, purchasedPlans]);
-
-  useEffect(() => {
-    const isAndroid = /Android/i.test(navigator.userAgent || "");
-    const dismissed = localStorage.getItem("androidPromptDismissed") === "1";
-    if (isAndroid && !dismissed) setShowAndroidPrompt(true);
-  }, []);
-
-  const showToast = (message, tone = "success") => {
-    setToast({ message, tone });
-    setTimeout(() => setToast(null), 3000);
-  };
-
-  const handleBuyCardClick = () => {
-    setPaymentDefaultAmount(10000);
-    setShowEnhancedPayment(true);
-  };
-
-  const handleTopUp = () => {
-    if (isCardLocked) {
-      showToast("Please unlock your card first", "warn");
-      setShowUnlockModal(true);
-      return;
-    }
-    setPaymentDefaultAmount(10000);
-    setShowEnhancedPayment(true);
-  };
-
-  const handlePaymentComplete = (method, phone, amount) => {
-    setWallets(prev => ({ ...prev, meal: prev.meal + amount }));
-    setLastPaymentAmount(amount);
-    setShowEnhancedPayment(false);
-    setPaymentProcessing(false);
-    setShowPaymentSuccess(true);
-    showToast(`RWF ${formatAmount(amount)} has been added to your meal wallet.`, "success");
-  };
-
-  const handlePaymentSuccessClose = () => {
-    setShowPaymentSuccess(false);
-    if (selectedCard === "No Card") {
-      setSelectedCard("Meal Card");
-      setIsCardLocked(true); // Lock the card on first purchase for security demo
-      showToast("Card purchased! Please unlock it to use.", "info");
-      setTimeout(() => setShowUnlockModal(true), 500); // Prompt unlock
-    }
-  };
-
-  const handleUnlockSuccess = () => {
-    setIsCardLocked(false);
-    setShowUnlockModal(false);
-    showToast("Card unlocked successfully! 🎉", "success");
-  };
-
-  const handleUnlockCancel = () => {
-    setShowUnlockModal(false);
-  };
-
-  const handleManualUnlock = () => {
-    setShowUnlockModal(true);
-  };
-
-  const handleWalletExchange = (from, to, amount) => {
-    if (isCardLocked) {
-      showToast("Please unlock your card first", "warn");
-      setShowUnlockModal(true);
-      return;
-    }
-    setWallets(prev => ({ ...prev, [from]: prev[from] - amount, [to]: prev[to] + amount }));
-    showToast(`Exchanged RWF ${formatAmount(amount)} from ${from} to ${to}`, "success");
-  };
-
-  const handleShareMeal = (planId, studentId, meals, message) => {
-    setPurchasedPlans(prevPlans => prevPlans.map(plan => {
-      if (plan.id === planId) {
-        const newUsed = [...plan.usedMeals];
-        let cnt = 0;
-        for (let i = 0; i < plan.totalMeals && cnt < meals; i++) {
-          if (!newUsed.includes(i)) {
-            newUsed.push(i);
-            cnt++;
-          }
-        }
-        return { ...plan, usedMeals: newUsed };
-      }
-      return plan;
-    }));
-    showToast(`Shared ${meals} meal${meals > 1 ? 's' : ''} with ${studentId}`, "success");
-  };
-
-  const handleOrder = (restaurant) => {
-    if (selectedCard !== "Meal Card") {
-      showToast("Please purchase a Meal Card first", "warn");
-      setShowEnhancedPayment(true);
-      return;
-    }
-
-    if (isCardLocked) {
-      showToast("Please unlock your card to make purchases", "warn");
-      setShowUnlockModal(true);
-      return;
-    }
-
-    setSelectedRestaurant(restaurant);
-    const firstPlan = Object.keys(restaurant.priceInfo || {})[0];
-    setSelectedPlan(firstPlan);
-    setPlanQty(1);
-    setShowOrderModal(true);
-  };
-
-  const handleOrderPlacement = async () => {
-    if (!selectedRestaurant || !selectedPlan) {
-      showToast("Please select a plan", "warn");
-      return;
-    }
-
-    const price = selectedRestaurant.priceInfo[selectedPlan] || 0;
-    const total = price * planQty;
-
-    if (wallets.meal < total) {
-      showToast("Insufficient meal wallet balance. Please top up.", "warn");
-      handleTopUp();
-      return;
-    }
-
-    setOrderProcessing(true);
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
-    setWallets(prev => ({ ...prev, meal: prev.meal - total }));
-
-    const newPlans = Array.from({ length: planQty }).map((_, i) => ({
-      id: Date.now() + i,
-      restaurantId: selectedRestaurant.id,
-      restaurantName: selectedRestaurant.name,
-      planType: selectedPlan,
-      totalMeals: getMealCount(selectedPlan),
-      usedMeals: [],
-      purchaseDate: Date.now(),
-      expiryDate: Date.now() + (selectedPlan === "Month" ? 30 : 15) * 24 * 60 * 60 * 1000,
-      price
-    }));
-    setPurchasedPlans(prev => [...prev, ...newPlans]);
-
-    setOrderProcessing(false);
-    setShowOrderModal(false);
-
-    const totalMeals = getMealCount(selectedPlan) * planQty;
-    showToast(`Successfully purchased! ${totalMeals} meals added.`, "success");
-
-    setTimeout(() => setActivePage("MyIgifu"), 500);
-  };
-
-  const handleUseMeal = (planId, mealIndex) => {
-    setPurchasedPlans(prevPlans => prevPlans.map(plan => {
-      if (plan.id === planId && !plan.usedMeals.includes(mealIndex)) {
-        return { ...plan, usedMeals: [...plan.usedMeals, mealIndex].sort((a, b) => a - b) };
-      }
-      return plan;
-    }));
-    showToast(`Meal ${mealIndex + 1} used ✅`, "success");
-  };
-
-  const handleDownloadApp = () => {
-    localStorage.setItem("androidPromptDismissed", "1");
-    setShowAndroidPrompt(false);
-  };
-
-  const handleContinueWeb = () => {
-    localStorage.setItem("androidPromptDismissed", "1");
-    setShowAndroidPrompt(false);
-  };
+  const {
+    activePage, setActivePage, greeting, showToast, toast,
+    handleOrder,
+    purchasedPlans, selectedCard, wallets, isCardLocked,
+    handleTopUp, handleBuyCardClick, setShowUnlockModal,
+    setShowExchangeModal, handleManualUnlock, handleUseMeal,
+    setSelectedPlanDetails, setShowPlanDetails, setSelectedSharePlan,
+    setShowShareModal, setSelectedCard, setWallets, setPurchasedPlans,
+    darkMode, setDarkMode, setShowAndroidPrompt,
+    ...modalProps
+  } = useApp();
 
   return (
     <div className="min-h-screen font-sans flex flex-col bg-gray-50 dark:bg-[#0b0b12] transition-colors duration-300">
@@ -270,10 +52,10 @@ function IgifuDashboardMainApp() {
       </header>
 
       {/* Info Ticker */}
-      <div className="bg-gradient-to-r from-yellow-400 to-orange-400 text-black px-4 py-2 shadow-md">
+      <div className="bg-gradient-to-r from-yellow-400 to-orange-400 text-black px-4 py-3 shadow-md">
         <div className="mx-auto w-full max-w-6xl flex items-center gap-3">
           <span className="w-2.5 h-2.5 rounded-full bg-black animate-pulse shrink-0" />
-          <span className="font-bold text-xs truncate">🎉 New payment options! Enjoy no-fee top-ups and instant card unlocking. Share meals with friends!</span>
+          <span className="font-bold text-base truncate">🎉 New payment options! Enjoy no-fee top-ups and instant card unlocking. Share meals with friends!</span>
         </div>
       </div>
 
@@ -346,16 +128,7 @@ function IgifuDashboardMainApp() {
         </div>
       </nav>
 
-      {/* Modals */}
-      <AnimatePresence>
-        {showAndroidPrompt && <AndroidPromptModal onDownload={handleDownloadApp} onContinue={handleContinueWeb} />}
-        {showEnhancedPayment && <EnhancedPaymentModal defaultAmount={paymentDefaultAmount} onPay={handlePaymentComplete} onClose={() => setShowEnhancedPayment(false)} processing={paymentProcessing} setProcessing={setPaymentProcessing} />}
-        {showPaymentSuccess && <PaymentSuccessModal amount={lastPaymentAmount} onClose={handlePaymentSuccessClose} />}
-        {showUnlockModal && <UnlockCardModal onSuccess={handleUnlockSuccess} onCancel={handleUnlockCancel} />}
-        {showExchangeModal && <WalletExchangeModal wallets={wallets} onExchange={handleWalletExchange} onClose={() => setShowExchangeModal(false)} />}
-        {showShareModal && selectedSharePlan && <ShareMealModal plan={selectedSharePlan} onShare={handleShareMeal} onClose={() => { setShowShareModal(false); setSelectedSharePlan(null); }} />}
-        {showPlanDetails && selectedPlanDetails && <PlanDetailsModal plan={selectedPlanDetails} onClose={() => { setShowPlanDetails(false); setSelectedPlanDetails(null); }} onUseMeal={handleUseMeal} />}
-      </AnimatePresence>
+      <Modals {...modalProps} />
     </div>
   );
 }

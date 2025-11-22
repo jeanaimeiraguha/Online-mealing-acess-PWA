@@ -7,16 +7,10 @@ import { pageMotion, tapAnimation } from '../utils/animations';
 import { getMinutes } from '../utils/helpers';
 
 const RestozPage = ({ showToast, onOrder }) => {
-  const [activeTab, setActiveTab] = useState("Browse");
   const [filterState, setFilterState] = useState({
+    searchQuery: "",
     campus: "All Campuses",
-    plan: "Any",
     priceSort: "None",
-    walkTime: "All Times",
-    selfService: "Any",
-    favorites: false,
-    nearMe: false,
-    budget: false,
     priceMin: 0,
     priceMax: 100000,
   });
@@ -93,26 +87,11 @@ const RestozPage = ({ showToast, onOrder }) => {
   useEffect(() => {
     let temp = [...restaurants];
 
-    if (activeTab === "Favourites" || filterState.favorites) {
-      temp = temp.filter(r => r.isFav);
-    }
-    if (filterState.budget) {
-      temp = temp.filter(r => Math.min(...Object.values(r.priceInfo || {})) <= 25000);
-    }
-    if (filterState.nearMe) {
-      temp = temp.filter(r => getMinutes(r.walkTime) <= 5);
+    if (filterState.searchQuery) {
+      temp = temp.filter(r => r.name.toLowerCase().includes(filterState.searchQuery.toLowerCase()));
     }
     if (filterState.campus && filterState.campus !== "All Campuses") {
       temp = temp.filter(r => r.campus === filterState.campus);
-    }
-    if (filterState.walkTime && filterState.walkTime !== "All Times") {
-      temp = temp.filter(r => {
-        const m = getMinutes(r.walkTime);
-        if (filterState.walkTime === "< 5 mins") return m < 5;
-        if (filterState.walkTime === "5-10 mins") return m >= 5 && m <= 10;
-        if (filterState.walkTime === "> 10 mins") return m > 10;
-        return true;
-      });
     }
     temp = temp.filter(r => {
       const minPlan = Math.min(...Object.values(r.priceInfo || { Month: 999999 }));
@@ -129,7 +108,7 @@ const RestozPage = ({ showToast, onOrder }) => {
     }
 
     setFilteredRestaurants(temp);
-  }, [restaurants, activeTab, filterState]);
+  }, [restaurants, filterState]);
 
   const toggleFav = (id ) => {
     setRestaurants(prev => prev.map(r => (r.id === id ? { ...r, isFav: !r.isFav } : r)));
@@ -138,17 +117,10 @@ const RestozPage = ({ showToast, onOrder }) => {
 
   return (
     <motion.section {...pageMotion} className="pb-28 min-h-screen">
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-3 sm:px-4 py-4 sm:py-6">
+      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-4">
         <div className="mx-auto w-full max-w-6xl">
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2">Find Your Perfect Meal Plan</h1>
-          <p className="text-blue-100 mb-4 text-xs sm:text-sm md:text-base">Choose from verified campus restaurants</p>
-          <div className="flex gap-2 overflow-x-auto pb-1">
-            {['Browse', 'Favourites', 'Nearby', 'Deals'].map(tab => (
-              <motion.button key={tab} whileTap={tapAnimation} onClick={() => setActiveTab(tab)} className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-bold text-xs sm:text-sm transition-all whitespace-nowrap ${activeTab === tab ? 'bg-white text-blue-700 shadow-lg' : 'bg-white/20 text-white hover:bg-white/30'}`}>
-                {tab}
-              </motion.button>
-            ))}
-          </div>
+          <h1 className="text-2xl sm:text-3xl font-bold mb-2">Find Your Perfect Meal Plan</h1>
+          <p className="text-blue-100 mb-4 text-sm sm:text-base">Choose from verified campus restaurants</p>
         </div>
       </div>
 
