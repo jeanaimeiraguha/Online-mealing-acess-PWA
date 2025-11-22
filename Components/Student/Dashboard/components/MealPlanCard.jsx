@@ -100,3 +100,4 @@ const MealPlanCard = ({ plan, onUseMeal, onViewDetails, onShare }) => {
 };
 
 export default MealPlanCard;
+

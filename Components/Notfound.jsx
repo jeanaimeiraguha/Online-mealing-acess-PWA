@@ -32,31 +32,6 @@ const NotFoundPage = () => {
 
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-50 to-gray-100 dark:from-[#0b0b12] dark:to-[#0e1015] text-gray-900 dark:text-gray-100 overflow-hidden px-4">
-      {/* Background orbs */}
-      <motion.div
-        aria-hidden
-        className="pointer-events-none absolute -top-28 -left-28 w-96 h-96 rounded-full blur-3xl opacity-30"
-        style={{
-          background:
-            "radial-gradient(closest-side, rgba(59,130,246,0.55), transparent)",
-        }}
-        animate={
-          prefersReducedMotion ? {} : { x: [0, 8, 0], y: [0, 10, 0] }
-        }
-        transition={{ repeat: Infinity, duration: 10 }}
-      />
-      <motion.div
-        aria-hidden
-        className="pointer-events-none absolute -bottom-24 -right-24 w-[28rem] h-[28rem] rounded-full blur-3xl opacity-25"
-        style={{
-          background:
-            "radial-gradient(closest-side, rgba(234,179,8,0.45), transparent)",
-        }}
-        animate={
-          prefersReducedMotion ? {} : { x: [0, -8, 0], y: [0, -12, 0] }
-        }
-        transition={{ repeat: Infinity, duration: 12 }}
-      />
 
       {/* Floating food emojis */}
       <motion.div

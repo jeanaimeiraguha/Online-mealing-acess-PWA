@@ -30,18 +30,7 @@ const MyIgifuPage = ({
   return (
     <motion.section {...pageMotion} className="px-3 sm:px-4 py-4 sm:py-6 pb-28">
       <div className="mx-auto w-full max-w-6xl">
-        {selectedCard === "Meal Card" && <QuickStats wallets={wallets} activePlans={activePlansCount} savedAmount={15000} />}
-        {selectedCard === "Meal Card" && !isCardLocked && <LowBalanceWarning balance={wallets.meal} onTopUp={handleTopUp} />}
-
         <div className="mb-4 sm:mb-6">
-          <div className="flex items-center justify-between mb-3 sm:mb-4">
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Your Digital Card</h2>
-            <select className="px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-xs sm:text-sm" value={selectedCard} onChange={(e) => setSelectedCard(e.target.value)}>
-              <option>No Card</option>
-              <option>Inka kitchen</option>
-            </select>
-          </div>
-
           <DigitalMealCard
             selectedCard={selectedCard}
             wallets={wallets}
@@ -81,24 +70,6 @@ const MyIgifuPage = ({
               </motion.button>
             </div>
 
-            {purchasedPlans.length > 0 && (
-              <div>
-                <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4">
-                  My Meal Plans ({purchasedPlans.filter(p => p.usedMeals.length < p.totalMeals).length} Active)
-                </h2>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-                  {purchasedPlans.map(plan => (
-                    <MealPlanCard
-                      key={plan.id}
-                      plan={plan}
-                      onUseMeal={handleUseMeal}
-                      onViewDetails={(p) => { setSelectedPlanDetails(p); setShowPlanDetails(true); }}
-                      onShare={(p) => { setSelectedSharePlan(p); setShowShareModal(true); }}
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
           </>
         )}
       </div>

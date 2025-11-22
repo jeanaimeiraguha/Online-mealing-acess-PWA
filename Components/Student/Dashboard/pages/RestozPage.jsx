@@ -28,7 +28,7 @@ const RestozPage = ({ showToast, onOrder }) => {
       campus: "Huye Campus",
       description: "Fresh, healthy meals prepared daily with local ingredients",
       fullDescription: "Campus Bites has served students for 10+ years. We specialize in nutritious, affordable meals for student budgets, blending traditional Rwandan dishes with international flavors.",
-      priceInfo: { "Month": 30000, "Half-month": 16000 },
+      priceInfo: { "Basic Plan": 30000, "Exclusive Plan": 16000 },
       walkTime: "3 mins",
       selfService: false,
       isFav: true,
@@ -131,7 +131,7 @@ const RestozPage = ({ showToast, onOrder }) => {
     setFilteredRestaurants(temp);
   }, [restaurants, activeTab, filterState]);
 
-  const toggleFav = (id) => {
+  const toggleFav = (id ) => {
     setRestaurants(prev => prev.map(r => (r.id === id ? { ...r, isFav: !r.isFav } : r)));
     showToast("Favorite updated", "info");
   };

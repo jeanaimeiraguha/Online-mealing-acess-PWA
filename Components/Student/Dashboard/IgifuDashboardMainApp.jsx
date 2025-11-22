@@ -251,13 +251,13 @@ function IgifuDashboardMainApp() {
       {/* Header */}
       <header className="relative sticky top-0 z-40 shadow-lg bg-gray-900 text-white">
         <div className="absolute inset-0">
-             <img src="/mnt/data/gtuu.JPG" alt="header-bg" className="w-full h-full object-cover opacity-60" />
+             {/* <img src="/mnt/data/gtuu.JPG" alt="header-bg" className="w-full h-full object-cover opacity-60" /> */}
              <div className="absolute inset-0 bg-gradient-to-r from-black/50 to-transparent"></div>
-        </div>
-        <div className="relative z-10 flex items-center justify-between max-w-6xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
-          <div className="flex items-center gap-2 sm:gap-3">
-            <motion.div whileTap={tapAnimation} className="text-2xl sm:text-3xl bg-white/20 backdrop-blur-md p-2 sm:p-2.5 rounded-xl sm:rounded-2xl shadow-lg">🍽️</motion.div>
-            <div><div className="text-[10px] sm:text-xs opacity-90">{greeting}</div><div className="text-sm sm:text-base font-bold">Welcome, Student</div></div>
+        </div> 
+        <div className="relative z-10 flex items-center justify-between max-w-6xl mx-auto px-4 py-3">
+          <div className="flex items-center gap-3">
+            <motion.div whileTap={tapAnimation} className="text-2xl bg-white/20 backdrop-blur-md p-2 rounded-xl shadow-lg">🍽️</motion.div>
+            <div><div className="text-xs opacity-90">{greeting}</div><div className="font-bold">Welcome, Student</div></div>
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
             <motion.button whileTap={tapAnimation} whileHover={hoverScale} onClick={() => setActivePage("Restoz")} className="p-2 sm:p-2.5 rounded-full bg-white/20 backdrop-blur-md hover:bg-white/30 transition-all"><FaSearch className="text-sm sm:text-lg" /></motion.button>
@@ -270,10 +270,10 @@ function IgifuDashboardMainApp() {
       </header>
 
       {/* Info Ticker */}
-      <div className="bg-gradient-to-r from-yellow-400 to-orange-400 text-black px-3 sm:px-4 py-2 sm:py-2.5 shadow-md">
-        <div className="mx-auto w-full max-w-6xl flex items-center gap-2 sm:gap-3">
-          <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-black animate-pulse shrink-0" />
-          <span className="font-bold text-xs sm:text-sm truncate">🎉 New payment options! Enjoy no-fee top-ups and instant card unlocking. Share meals with friends!</span>
+      <div className="bg-gradient-to-r from-yellow-400 to-orange-400 text-black px-4 py-2 shadow-md">
+        <div className="mx-auto w-full max-w-6xl flex items-center gap-3">
+          <span className="w-2.5 h-2.5 rounded-full bg-black animate-pulse shrink-0" />
+          <span className="font-bold text-xs truncate">🎉 New payment options! Enjoy no-fee top-ups and instant card unlocking. Share meals with friends!</span>
         </div>
       </div>
 
@@ -337,9 +337,9 @@ function IgifuDashboardMainApp() {
             const isActive = activePage === t.n;
             return (
               <motion.button key={t.n} onClick={() => setActivePage(t.n)} whileTap={tapAnimation} className={`flex flex-col items-center p-2 relative transition-all ${isActive ? "text-blue-600 dark:text-blue-400" : "text-gray-400 dark:text-gray-500"}`}>
-                <motion.div animate={{ scale: isActive ? 1.1 : 1 }} className="text-xl sm:text-2xl mb-0.5 sm:mb-1">{t.i}</motion.div>
-                <span className="text-[9px] sm:text-[10px] font-bold">{t.label}</span>
-                {isActive && <motion.div layoutId="nav_indicator" className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-10 sm:w-12 h-1 bg-blue-600 dark:bg-blue-400 rounded-full" />}
+                <motion.div animate={{ scale: isActive ? 1.1 : 1 }} className="text-2xl mb-1">{t.i}</motion.div>
+                <span className="text-[10px] font-bold">{t.label}</span>
+                {isActive && <motion.div layoutId="nav_indicator" className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-12 h-1 bg-blue-600 dark:bg-blue-400 rounded-full" />}
               </motion.button>
             );
           })}

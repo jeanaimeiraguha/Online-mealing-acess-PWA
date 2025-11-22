@@ -64,7 +64,7 @@ const RestaurantCard = ({ restaurant, index, onToggleFav, onOrder }) => {
               <FaInfoCircle /> <span className="hidden sm:inline">Info</span>
             </motion.button>
             <motion.button whileTap={tapAnimation} whileHover={{ scale: 1.02 }} onClick={() => onOrder(restaurant)} className="flex-[2] bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-2.5 sm:py-3 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 text-sm sm:text-base">
-              <FaShoppingCart /><span>Order Now</span>
+              <FaShoppingCart /><span>Subscribe Now</span>
             </motion.button>
           </div>
         </div>

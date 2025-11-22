@@ -3904,10 +3904,10 @@ const Signup: React.FC = () => {
 
 const RoleSelection: React.FC<{ onRoleSelect: (role: 'student' | 'restaurant') => void }> = ({ onRoleSelect }) => {
   return (
-    <div className="w-full max-w-md mx-auto text-center animate-fadeIn">
+    <div className="w-full max-w-lg mx-auto text-center animate-fadeIn">
       <div className="mb-8">
-        <h2 className="text-4xl font-bold text-gray-800 mb-4">Welcome to YouWare</h2>
-        <p className="text-gray-600 text-lg">Choose how you want to join us</p>
+        <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4">Welcome to YouWare</h2>
+        <p className="text-gray-600 text-base sm:text-lg">Choose how you want to join us</p>
       </div>
 
       <div className="space-y-4">
@@ -3922,8 +3922,8 @@ const RoleSelection: React.FC<{ onRoleSelect: (role: 'student' | 'restaurant') =
               </svg>
             </div>
             <div className="text-left">
-              <h3 className="text-xl font-semibold text-gray-800">I'm a Student</h3>
-              <p className="text-gray-500 text-sm">Order food from restaurants and manage your preferences</p>
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-800">I'm a Student</h3>
+              <p className="text-gray-500 text-xs sm:text-sm">Order food from restaurants and manage your preferences</p>
             </div>
           </div>
           <svg className="text-gray-400 group-hover:text-blue-600 transition-all transform group-hover:translate-x-2 w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -3942,8 +3942,8 @@ const RoleSelection: React.FC<{ onRoleSelect: (role: 'student' | 'restaurant') =
               </svg>
             </div>
             <div className="text-left">
-              <h3 className="text-xl font-semibold text-gray-800">I'm a Restaurant Owner</h3>
-              <p className="text-gray-500 text-sm">Register your restaurant and manage orders</p>
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-800">I'm a Restaurant Owner</h3>
+              <p className="text-gray-500 text-xs sm:text-sm">Register your restaurant and manage orders</p>
             </div>
           </div>
           <svg className="text-gray-400 group-hover:text-green-600 transition-all transform group-hover:translate-x-2 w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -4044,7 +4044,7 @@ const SignUpForm: React.FC<{
       {/* Role Selection */}
       <div className="mb-6">
         <p className="text-sm font-medium text-gray-700 mb-3">I am a:</p>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <button
             type="button"
             onClick={() => onRoleChange('student')}
@@ -4486,10 +4486,10 @@ const BiometricPrompt: React.FC<{
 }> = ({ username, displayName, onComplete, onSkip }) => {
   const [biometricAvailable, setBiometricAvailable] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
-  const [selectedMethod, setSelectedMethod] = useState<'biometric' | 'pin' | null>(null);
-  const [pin, setPin] = useState('');
-  const [confirmPin, setConfirmPin] = useState('');
-  const [pinError, setPinError] = useState('');
+  const [selectedMethod, setSelectedMethod] = useState<'biometric' | 'password' | null>(null);
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   const { execute: executeAsync } = useAsyncAuth();
 
   useEffect(() => {
@@ -4519,23 +4519,23 @@ const BiometricPrompt: React.FC<{
     });
   };
 
-  const handlePinSetup = () => {
-    if (pin.length < 4) {
-      setPinError('PIN must be at least 4 digits');
+  const handlePasswordSetup = () => {
+    if (password.length < 4) {
+      setPasswordError('Password must be at least 4 characters');
       return;
     }
     
-    if (pin !== confirmPin) {
-      setPinError('PINs do not match');
+    if (password !== confirmPassword) {
+      setPasswordError('Passwords do not match');
       return;
     }
     
-    // Store PIN for demo purposes
-    const userPins = JSON.parse(localStorage.getItem('userPins') || '{}');
-    userPins[username] = pin;
-    localStorage.setItem('userPins', JSON.stringify(userPins));
+    // Store password for demo purposes
+    const userPasswords = JSON.parse(localStorage.getItem('userPasswords') || '{}');
+    userPasswords[username] = password;
+    localStorage.setItem('userPasswords', JSON.stringify(userPasswords));
     
-    toast.success('PIN setup complete!', {
+    toast.success('Password setup complete!', {
       icon: '🔑',
       duration: 2000,
     });
@@ -4543,7 +4543,7 @@ const BiometricPrompt: React.FC<{
     onComplete(false); // Not biometric, but completed
   };
 
-  if (selectedMethod === 'pin') {
+  if (selectedMethod === 'password') {
     return (
       <div className="w-full max-w-md mx-auto bg-white p-8 rounded-2xl shadow-2xl animate-fadeIn">
         <div className="text-center mb-6">
@@ -4552,48 +4552,46 @@ const BiometricPrompt: React.FC<{
               <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
             </svg>
           </div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">Create a PIN</h2>
-          <p className="text-gray-600 text-sm">Set up a secure PIN for quick access</p>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">Create a Password</h2>
+          <p className="text-gray-600 text-sm">Set up a secure password for quick access</p>
         </div>
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Create PIN (minimum 4 digits)</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Create Password (minimum 4 characters)</label>
             <input
               type="password"
-              value={pin}
+              value={password}
               onChange={(e) => {
-                const value = e.target.value.replace(/\D/g, '').slice(0, 6);
-                setPin(value);
-                if (pinError) setPinError('');
+                const value = e.target.value;
+                setPassword(value);
+                if (passwordError) setPasswordError('');
               }}
-              placeholder="Enter PIN"
+              placeholder="Enter Password"
               className={`w-full px-4 py-3 rounded-xl border-2 text-center text-lg font-mono tracking-widest focus:ring-2 focus:ring-blue-500 ${
-                pinError ? 'border-red-500' : 'border-gray-300'
+                passwordError ? 'border-red-500' : 'border-gray-300'
               }`}
-              maxLength={6}
               autoFocus
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Confirm PIN</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
             <input
               type="password"
-              value={confirmPin}
+              value={confirmPassword}
               onChange={(e) => {
-                const value = e.target.value.replace(/\D/g, '').slice(0, 6);
-                setConfirmPin(value);
-                if (pinError) setPinError('');
+                const value = e.target.value;
+                setConfirmPassword(value);
+                if (passwordError) setPasswordError('');
               }}
-              placeholder="Confirm PIN"
+              placeholder="Confirm Password"
               className={`w-full px-4 py-3 rounded-xl border-2 text-center text-lg font-mono tracking-widest focus:ring-2 focus:ring-blue-500 ${
-                pinError ? 'border-red-500' : 'border-gray-300'
+                passwordError ? 'border-red-500' : 'border-gray-300'
               }`}
-              maxLength={6}
             />
-            {pinError && (
-              <p className="text-red-500 text-xs mt-1">{pinError}</p>
+            {passwordError && (
+              <p className="text-red-500 text-xs mt-1">{passwordError}</p>
             )}
           </div>
 
@@ -4605,10 +4603,10 @@ const BiometricPrompt: React.FC<{
               Back
             </button>
             <button
-              onClick={handlePinSetup}
-              disabled={pin.length < 4 || confirmPin.length < 4}
+              onClick={handlePasswordSetup}
+              disabled={password.length < 4 || confirmPassword.length < 4}
               className={`flex-1 py-3 rounded-xl font-semibold text-white transition-all duration-300 flex items-center justify-center space-x-2 ${
-                pin.length < 4 || confirmPin.length < 4
+                password.length < 4 || confirmPassword.length < 4
                   ? 'bg-gray-400 cursor-not-allowed'
                   : 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700'
               }`}
@@ -4642,18 +4640,9 @@ const BiometricPrompt: React.FC<{
           className="mb-4 p-4 rounded-xl border-2 border-purple-200 hover:border-purple-300 cursor-pointer transition-all group"
         >
           <div className="flex items-center space-x-4">
-            <div className="bg-purple-100 p-3 rounded-full group-hover:bg-purple-200 transition-colors">
-              <svg 
-              <path fillRule="evenodd" d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z" clipRule="evenodd" />
-              </svg>
-            </div>
-            <div className="flex-1">
-              <h3 className="font-semibold text-gray-800">Biometric Authentication</h3>
-              <p className="text-sm text-gray-600">Use your fingerprint, Face ID, or Windows Hello</p>
-            </div>
             <div className="text-purple-600">
               <svg className="w-4 h-4 opacity-60" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" ></path>
               </svg>
             </div>
           </div>
@@ -4661,7 +4650,7 @@ const BiometricPrompt: React.FC<{
       )}
 
       <div 
-        onClick={() => setSelectedMethod('pin')}
+        onClick={() => setSelectedMethod('password')}
         className="mb-6 p-4 rounded-xl border-2 border-green-200 hover:border-green-300 cursor-pointer transition-all group"
       >
         <div className="flex items-center space-x-4">
@@ -4671,8 +4660,8 @@ const BiometricPrompt: React.FC<{
             </svg>
           </div>
           <div className="flex-1">
-            <h3 className="font-semibold text-gray-800">PIN Authentication</h3>
-            <p className="text-sm text-gray-600">Create a secure 4-6 digit PIN</p>
+            <h3 className="font-semibold text-gray-800">Password Authentication</h3>
+            <p className="text-sm text-gray-600">Create a secure password</p>
           </div>
           <div className="text-green-600">
             <svg className="w-4 h-4 opacity-60" fill="currentColor" viewBox="0 0 20 20">
@@ -5093,7 +5082,7 @@ const RestaurantRequest: React.FC<{
               </p>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
               <div className="text-center p-4 bg-blue-50 rounded-xl">
                 <svg className="text-blue-600 w-6 h-6 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -5165,7 +5154,7 @@ const RestaurantRequest: React.FC<{
             <p className="text-blue-100 text-lg mb-4">
               Our team will help you set up your restaurant account
             </p>
-            <div className="flex items-center space-x-6 text-sm">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-6 text-sm">
               <div className="flex items-center space-x-2">
                 <svg className="text-blue-200 w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" />
@@ -5215,7 +5204,7 @@ const RestaurantRequest: React.FC<{
       </div>
 
       <form onSubmit={handleSubmit} className="p-8 space-y-8">
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Business Name *</label>
             <input
@@ -5287,7 +5276,7 @@ const RestaurantRequest: React.FC<{
           {errors.businessAddress && <p className="text-red-500 text-xs mt-1">{errors.businessAddress}</p>}
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">City *</label>
             <input
@@ -5317,7 +5306,7 @@ const RestaurantRequest: React.FC<{
           </div>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Business Type *</label>
             <select
@@ -5362,7 +5351,7 @@ const RestaurantRequest: React.FC<{
           />
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Preferred Contact Method</label>
             <select
@@ -5390,7 +5379,7 @@ const RestaurantRequest: React.FC<{
           </div>
         </div>
 
-        <div className="flex space-x-4">
+        <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
           <button
             type="button"
             onClick={() => window.location.reload()}
@@ -5577,4 +5566,4 @@ export {
   AuthErrorBoundary,
 };
 
-export default Signup;
+export { Signup as default };

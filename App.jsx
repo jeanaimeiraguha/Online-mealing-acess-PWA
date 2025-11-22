@@ -13,7 +13,7 @@ import MealWalletpage10 from "./Components/WelcomePages/page10";
 import MealWalletpage14 from "./Components/WelcomePages/Page14";
 import MealWallet14 from "./Components/WelcomePages/page14b";
 import MealWallet14d from "./Components/WelcomePages/page14d";
-import IgifuDashboard from "./Components/Student/MealCard";
+import IgifuDashboard from "./Components/Student/Dashboard/IgifuDashboardMainApp";
 function App() {
   return (
     <Router>
