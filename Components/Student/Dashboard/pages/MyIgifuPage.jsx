@@ -51,24 +51,7 @@ const MyIgifuPage = ({
 
         {selectedCard === "Meal Card" && (
           <>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mb-6">
-              <motion.button key="TopUp" whileHover={hoverScale} whileTap={tapAnimation} onClick={handleTopUp} className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl p-3 sm:p-4 border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-all">
-                <FaCreditCard className="text-xl sm:text-2xl text-blue-500 mb-1 sm:mb-2 mx-auto" />
-                <div className="text-xs sm:text-sm font-bold text-gray-700 dark:text-gray-300">Top Up</div>
-              </motion.button>
-              <motion.button key="History" whileHover={hoverScale} whileTap={tapAnimation} onClick={() => showToast('History coming soon!', 'info')} className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl p-3 sm:p-4 border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-all">
-                <FaHistory className="text-xl sm:text-2xl text-purple-500 mb-1 sm:mb-2 mx-auto" />
-                <div className="text-xs sm:text-sm font-bold text-gray-700 dark:text-gray-300">History</div>
-              </motion.button>
-              <motion.button key="Scan" whileHover={hoverScale} whileTap={tapAnimation} onClick={() => showToast('Scan & Pay coming soon!', 'info')} className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl p-3 sm:p-4 border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-all">
-                <FaQrcode className="text-xl sm:text-2xl text-green-500 mb-1 sm:mb-2 mx-auto" />
-                <div className="text-xs sm:text-sm font-bold text-gray-700 dark:text-gray-300">Scan & Pay</div>
-              </motion.button>
-              <motion.button key="Rewards" whileHover={hoverScale} whileTap={tapAnimation} onClick={() => showToast('Rewards coming soon!', 'info')} className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl p-3 sm:p-4 border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-all">
-                <FaGift className="text-xl sm:text-2xl text-yellow-500 mb-1 sm:mb-2 mx-auto" />
-                <div className="text-xs sm:text-sm font-bold text-gray-700 dark:text-gray-300">Rewards</div>
-              </motion.button>
-            </div>
+
 
           </>
         )}

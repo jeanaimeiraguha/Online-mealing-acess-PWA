@@ -143,7 +143,7 @@ const useApp = () => {
     showToast(`Shared ${meals} meal${meals > 1 ? 's' : ''} with ${studentId}`, "success");
   };
 
-  const handleOrder = (restaurant) => {
+  const handleOrder = (restaurant, period) => {
     if (selectedCard !== "Meal Card") {
       showToast("Please purchase a Meal Card first", "warn");
       setShowEnhancedPayment(true);
@@ -157,9 +157,8 @@ const useApp = () => {
     }
 
     setSelectedRestaurant(restaurant);
-    const firstPlan = Object.keys(restaurant.priceInfo || {})[0];
-    setSelectedPlan(firstPlan);
-    setPlanQty(1);
+    setSelectedPlan(period);
+    setPlanQty(getMealCount(period));
     setShowOrderModal(true);
   };
 
@@ -173,6 +172,24 @@ const useApp = () => {
     showToast(`Meal ${mealIndex + 1} used ✅`, "success");
   };
 
+  const handleOrderSubmit = (order) => {
+    setOrderProcessing(true);
+    setTimeout(() => {
+      const newPlan = {
+        id: purchasedPlans.length + 1,
+        restaurant: order.restaurant.name,
+        type: order.plan,
+        totalMeals: getMealCount(order.plan),
+        usedMeals: [],
+        price: order.totalPrice
+      };
+      setPurchasedPlans(prev => [...prev, newPlan]);
+      setOrderProcessing(false);
+      setShowOrderModal(false);
+      showToast(`Successfully subscribed to ${order.restaurant.name}'s ${order.plan} plan!`, "success");
+    }, 2000);
+  };
+
   const handleDownloadApp = () => {
     localStorage.setItem("androidPromptDismissed", "1");
     setShowAndroidPrompt(false);
@@ -184,7 +201,7 @@ const useApp = () => {
   };
 
   return {
-    selectedCard, setSelectedCard, isCardLocked, setIsCardLocked, activePage, setActivePage, darkMode, setDarkMode, greeting, toast, showToast, wallets, setWallets, purchasedPlans, setPurchasedPlans, showEnhancedPayment, setShowEnhancedPayment, paymentProcessing, setPaymentProcessing, paymentDefaultAmount, showPaymentSuccess, lastPaymentAmount, showUnlockModal, setShowUnlockModal, showExchangeModal, setShowExchangeModal, showShareModal, setShowShareModal, selectedSharePlan, setSelectedSharePlan, showOrderModal, setShowOrderModal, selectedRestaurant, setSelectedRestaurant, selectedPlan, setSelectedPlan, planQty, setPlanQty, orderProcessing, setOrderProcessing, showPlanDetails, setShowPlanDetails, selectedPlanDetails, setSelectedPlanDetails, showAndroidPrompt, setShowAndroidPrompt, handleBuyCardClick, handleTopUp, handlePaymentComplete, handlePaymentSuccessClose, handleUnlockSuccess, handleUnlockCancel, handleManualUnlock, handleWalletExchange, handleShareMeal, handleOrder, handleUseMeal, handleDownloadApp, handleContinueWeb
+    selectedCard, setSelectedCard, isCardLocked, setIsCardLocked, activePage, setActivePage, darkMode, setDarkMode, greeting, toast, showToast, wallets, setWallets, purchasedPlans, setPurchasedPlans, showEnhancedPayment, setShowEnhancedPayment, paymentProcessing, setPaymentProcessing, paymentDefaultAmount, showPaymentSuccess, lastPaymentAmount, showUnlockModal, setShowUnlockModal, showExchangeModal, setShowExchangeModal, showShareModal, setShowShareModal, selectedSharePlan, setSelectedSharePlan, showOrderModal, setShowOrderModal, selectedRestaurant, setSelectedRestaurant, selectedPlan, setSelectedPlan, planQty, setPlanQty, orderProcessing, setOrderProcessing, showPlanDetails, setShowPlanDetails, selectedPlanDetails, setSelectedPlanDetails, showAndroidPrompt, setShowAndroidPrompt, handleBuyCardClick, handleTopUp, handlePaymentComplete, handlePaymentSuccessClose, handleUnlockSuccess, handleUnlockCancel, handleManualUnlock, handleWalletExchange, handleShareMeal, handleOrder, handleUseMeal, handleOrderSubmit, handleDownloadApp, handleContinueWeb
   };
 };
 

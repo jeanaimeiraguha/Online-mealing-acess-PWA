@@ -1,10 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { FaTimes, FaStar, FaMapMarkerAlt, FaInfoCircle, FaPhone, FaEnvelope, FaClock, FaUtensils } from 'react-icons/fa';
+import { FaTimes, FaStar, FaMapMarkerAlt, FaInfoCircle, FaPhone, FaEnvelope, FaClock, FaUtensils, FaShoppingCart } from 'react-icons/fa';
 import { modalMotion, tapAnimation } from '../utils/animations';
 import { formatAmount } from '../utils/helpers';
 
-const RestaurantDetailsModal = ({ restaurant, onClose }) => {
+const RestaurantDetailsModal = ({ restaurant, onOrder, onClose }) => {
   if (!restaurant) return null;
 
   return (
@@ -137,6 +137,28 @@ const RestaurantDetailsModal = ({ restaurant, onClose }) => {
               ))}
             </div>
           )}
+          <div className="p-6 bg-gray-50 dark:bg-gray-800/50 mt-6">
+          <div className="grid grid-cols-2 gap-4">
+            {Object.entries(restaurant.priceInfo || {}).map(([period, amount]) => (
+              <motion.button
+                key={period}
+                whileTap={tapAnimation}
+                whileHover={{ scale: 1.02 }}
+                onClick={() => {
+                  onOrder(restaurant, period);
+                  onClose();
+                }}
+                className="p-4 rounded-xl bg-white dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600/50 text-left transition-all hover:shadow-lg hover:border-blue-500"
+              >
+                <div className="font-bold text-gray-800 dark:text-white text-lg">RWF {formatAmount(amount)}</div>
+                <div className="text-gray-500 dark:text-gray-400 text-sm">for {period}</div>
+                <div className="mt-3 text-blue-600 dark:text-blue-400 font-bold text-sm flex items-center gap-2">
+                  Subscribe Now <FaShoppingCart/>
+                </div>
+              </motion.button>
+            ))}
+          </div>
+        </div>
         </div>
       </motion.div>
     </motion.div>

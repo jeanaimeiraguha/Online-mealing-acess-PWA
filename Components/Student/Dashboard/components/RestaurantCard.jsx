@@ -71,7 +71,7 @@ const RestaurantCard = ({ restaurant, index, onToggleFav, onOrder }) => {
       </motion.div>
 
       <AnimatePresence>
-        {showDetails && <RestaurantDetailsModal restaurant={restaurant} onClose={() => setShowDetails(false)} />}
+        {showDetails && <RestaurantDetailsModal restaurant={restaurant} onOrder={onOrder} onClose={() => setShowDetails(false)} />}
       </AnimatePresence>
     </>
   );

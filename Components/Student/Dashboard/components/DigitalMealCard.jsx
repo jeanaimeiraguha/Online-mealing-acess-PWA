@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FaLock, FaShoppingCart, FaExchangeAlt, FaHistory, FaQuestionCircle, FaShareAlt, FaTag } from 'react-icons/fa';
+import { FaLock, FaShoppingCart, FaExchangeAlt, FaHistory, FaQuestionCircle, FaShareAlt, FaTag, FaMoneyBillWave } from 'react-icons/fa';
 import { tapAnimation, hoverScale } from '../utils/animations';
 import { formatAmount } from '../utils/helpers';
 
@@ -28,9 +28,7 @@ const DigitalMealCard = ({ selectedCard, wallets, isLocked, onBuyCard,  onExchan
     <div className="text-white">
       <h2 className="text-2xl font-bold mb-4">Your Igifu Card</h2>
       <div className="flex gap-4 mb-6">
-        <ActionButton icon={FaShoppingCart} label="Buy Igifu" />
         <ActionButton icon={FaExchangeAlt} label="Swap Wallets" />
-        <ActionButton icon={FaHistory} label="History" />
         <ActionButton icon={FaQuestionCircle} label="Support" />
         <ActionButton icon={FaShareAlt} label="Share Meals" isSoon />
         <ActionButton icon={FaTag} label="Sell Igifu" isSoon />
@@ -70,7 +68,10 @@ const DigitalMealCard = ({ selectedCard, wallets, isLocked, onBuyCard,  onExchan
         <div className="bg-gray-800 p-6 rounded-b-lg">
           <div className="flex justify-between items-center mb-6">
             <div>
-              <span className="text-gray-400">Balance FRW</span>
+              <div className="flex items-center gap-2">
+                <FaMoneyBillWave className="text-gray-400" />
+                <span className="text-gray-400">Balance</span>
+              </div>
               <div className="text-2xl font-bold">{formatAmount(wallets.meal)}</div>
             </div>
             <div>

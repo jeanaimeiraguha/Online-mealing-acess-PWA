@@ -19,6 +19,7 @@ function IgifuDashboardMainApp() {
   const {
     activePage, setActivePage, greeting, showToast, toast,
     handleOrder,
+    handleOrderSubmit,
     purchasedPlans, selectedCard, wallets, isCardLocked,
     handleTopUp, handleBuyCardClick, setShowUnlockModal,
     setShowExchangeModal, handleManualUnlock, handleUseMeal,
@@ -118,9 +119,9 @@ function IgifuDashboardMainApp() {
           ].map(t => {
             const isActive = activePage === t.n;
             return (
-              <motion.button key={t.n} onClick={() => setActivePage(t.n)} whileTap={tapAnimation} className={`flex flex-col items-center p-2 relative transition-all ${isActive ? "text-blue-600 dark:text-blue-400" : "text-gray-400 dark:text-gray-500"}`}>
-                <motion.div animate={{ scale: isActive ? 1.1 : 1 }} className="text-2xl mb-1">{t.i}</motion.div>
-                <span className="text-[10px] font-bold">{t.label}</span>
+              <motion.button key={t.n} onClick={() => setActivePage(t.n)} whileTap={tapAnimation} className={`flex flex-col items-center p-1 sm:p-2 relative transition-all ${isActive ? "text-blue-600 dark:text-blue-400" : "text-gray-400 dark:text-gray-500"}`}>
+                <motion.div animate={{ scale: isActive ? 1.1 : 1 }} className="text-xl sm:text-2xl mb-0.5 sm:mb-1">{t.i}</motion.div>
+                <span className="text-[9px] sm:text-[10px] font-bold">{t.label}</span>
                 {isActive && <motion.div layoutId="nav_indicator" className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-12 h-1 bg-blue-600 dark:bg-blue-400 rounded-full" />}
               </motion.button>
             );
@@ -128,7 +129,7 @@ function IgifuDashboardMainApp() {
         </div>
       </nav>
 
-      <Modals {...modalProps} />
+      <Modals {...modalProps} handleOrderSubmit={handleOrderSubmit} />
     </div>
   );
 }

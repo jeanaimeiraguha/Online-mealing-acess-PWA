@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaFilter, FaChevronRight, FaSearch, FaWallet, FaMapMarkerAlt, FaDollarSign } from 'react-icons/fa';
+import { FaFilter, FaChevronRight, FaSearch, FaWallet, FaMapMarkerAlt, FaDollarSign, FaMoneyBillWave } from 'react-icons/fa';
 import { tapAnimation } from '../utils/animations';
 import { formatAmount } from '../utils/helpers';
 
@@ -33,44 +33,61 @@ const EnhancedFilterBar = ({ filterState, setFilterState, resultsCount }) => {
   return (
     <div className="bg-white dark:bg-[#0b0b12] border-b border-gray-200 dark:border-white/10 sticky top-0 z-30">
       <div className="px-3 sm:px-4 py-3 space-y-3">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 items-center">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-start">
           {/* Search Input */}
-          <div className="relative md:col-span-1">
-            <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search by name..."
-              value={filterState.searchQuery}
-              onChange={(e) => setFilterState(prev => ({ ...prev, searchQuery: e.target.value }))}
-              className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-sm"
-            />
+          <div className="sm:col-span-1">
+            <label htmlFor="search-name" className="text-sm font-bold text-gray-700 dark:text-gray-300 flex items-center gap-2 mb-1 ml-1">
+                <FaSearch className="text-gray-400" />
+                Name
+            </label>
+            <div className="relative">
+              <input
+                id="search-name"
+                type="text"
+                placeholder="Search by name..."
+                value={filterState.searchQuery}
+                onChange={(e) => setFilterState(prev => ({ ...prev, searchQuery: e.target.value }))}
+                className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-sm"
+              />
+            </div>
           </div>
 
           {/* Campus and Price Sort */}
-          <div className="grid grid-cols-2 gap-3 md:col-span-2">
-            <div className="relative">
-              <FaMapMarkerAlt className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-              <select className="w-full pl-9 pr-2 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-xs sm:text-sm" value={filterState.campus} onChange={(e) => setFilterState(prev => ({ ...prev, campus: e.target.value }))}>
-                <option value="All Campuses">All Campuses</option>
-                <option value="Huye Campus">Huye</option>
-                <option value="Remera Campus">Remera</option>
-                <option value="Nyarugenge Campus">Nyarugenge</option>
-                <option value="Tumba Campus">Tumba</option>
-                <option value="Gishushu Campus">Gishushu</option>
-                <option value="Kimironko Campus">Kimironko</option>
-                <option value="Kacyiru Campus">Kacyiru</option>
-              </select>
+          <div className="grid grid-cols-2 gap-3 sm:col-span-2">
+            <div>
+                <label htmlFor="campus-select" className="text-sm font-bold text-gray-700 dark:text-gray-300 flex items-center gap-2 mb-1 ml-1">
+                    <FaMapMarkerAlt className="text-gray-400" />
+                    Campus
+                </label>
+                <div className="relative">
+                    <select id="campus-select" className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-xs sm:text-sm" value={filterState.campus} onChange={(e) => setFilterState(prev => ({ ...prev, campus: e.target.value }))}>
+                        <option value="All Campuses">All Campuses</option>
+                        <option value="Huye Campus">Huye</option>
+                        <option value="Remera Campus">Remera</option>
+                        <option value="Nyarugenge Campus">Nyarugenge</option>
+                        <option value="Tumba Campus">Tumba</option>
+                        <option value="Gishushu Campus">Gishushu</option>
+                        <option value="Kimironko Campus">Kimironko</option>
+                        <option value="Kacyiru Campus">Kacyiru</option>
+                    </select>
+                </div>
             </div>
 
-            <div className="relative">
-              <FaDollarSign className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-              <select 
-                className="w-full pl-9 pr-2 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-xs sm:text-sm" 
-                value={`${filterState.priceMin}-${filterState.priceMax}`} 
-                onChange={handlePriceRangeChange}
-              >
-                {priceRanges.map(range => <option key={range.label} value={`${range.min}-${range.max}`}>{range.label}</option>)}
-              </select>
+            <div>
+                <label htmlFor="price-select" className="text-sm font-bold text-gray-700 dark:text-gray-300 flex items-center gap-2 mb-1 ml-1">
+                    <FaMoneyBillWave className="text-gray-400" />
+                    Price
+                </label>
+                <div className="relative">
+                    <select 
+                        id="price-select"
+                        className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-xs sm:text-sm" 
+                        value={`${filterState.priceMin}-${filterState.priceMax}`} 
+                        onChange={handlePriceRangeChange}
+                    >
+                        {priceRanges.map(range => <option key={range.label} value={`${range.min}-${range.max}`}>{range.label}</option>)}
+                    </select>
+                </div>
             </div>
           </div>
         </div>

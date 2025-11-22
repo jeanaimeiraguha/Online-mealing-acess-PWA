@@ -5204,7 +5204,7 @@ const RestaurantRequest: React.FC<{
       </div>
 
       <form onSubmit={handleSubmit} className="p-8 space-y-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Business Name *</label>
             <input
@@ -5276,7 +5276,7 @@ const RestaurantRequest: React.FC<{
           {errors.businessAddress && <p className="text-red-500 text-xs mt-1">{errors.businessAddress}</p>}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">City *</label>
             <input
@@ -5306,7 +5306,7 @@ const RestaurantRequest: React.FC<{
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Business Type *</label>
             <select
@@ -5351,7 +5351,7 @@ const RestaurantRequest: React.FC<{
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Preferred Contact Method</label>
             <select
@@ -5563,6 +5563,10 @@ export {
   LoginForm,
   RestaurantRequest,
   Dashboard,
+  AuthErrorBoundary,
+};
+
+export { Signup as default };
   AuthErrorBoundary,
 };
 
