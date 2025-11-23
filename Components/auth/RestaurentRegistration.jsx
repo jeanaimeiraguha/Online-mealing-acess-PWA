@@ -173,17 +173,17 @@ export const RestaurantRegistration: React.FC<RestaurantRegistrationProps> = ({
   return (
     <div className="w-full max-w-4xl mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-6 text-white">
+      <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-6 sm:p-8 text-white">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-2xl font-bold mb-2">Register Your Restaurant</h2>
-            <p className="text-blue-100">Join our network and start serving customers today</p>
+            <h2 className="text-2xl sm:text-3xl font-bold mb-2">Register Your Restaurant</h2>
+            <p className="text-blue-100 text-sm sm:text-base">Join our network and start serving customers today</p>
           </div>
           <div className="hidden md:block">
             <img 
               src="/src/assets/restaurant-ui-design.jpeg" 
               alt="Restaurant Registration" 
-              className="w-32 h-32 rounded-xl object-cover border-4 border-white/20"
+              className="w-24 h-24 sm:w-32 sm:h-32 rounded-xl object-cover border-4 border-white/20"
               onError={(e) => {
                 const target = e.target as HTMLImageElement;
                 target.style.display = 'none';
@@ -193,11 +193,11 @@ export const RestaurantRegistration: React.FC<RestaurantRegistrationProps> = ({
         </div>
 
         {/* Role Selection */}
-        <div className="flex space-x-4">
+        <div className="flex space-x-2 sm:space-x-4">
           <button
             type="button"
             onClick={() => onRoleChange('student')}
-            className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+            className={`px-3 py-2 sm:px-4 text-sm sm:text-base rounded-lg font-semibold transition-all ${
               selectedRole === 'student'
                 ? 'bg-white text-blue-600'
                 : 'bg-blue-500 text-white hover:bg-blue-400'
@@ -208,7 +208,7 @@ export const RestaurantRegistration: React.FC<RestaurantRegistrationProps> = ({
           <button
             type="button"
             onClick={() => onRoleChange('restaurant')}
-            className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+            className={`px-3 py-2 sm:px-4 text-sm sm:text-base rounded-lg font-semibold transition-all ${
               selectedRole === 'restaurant'
                 ? 'bg-white text-blue-600'
                 : 'bg-blue-500 text-white hover:bg-blue-400'
@@ -219,15 +219,15 @@ export const RestaurantRegistration: React.FC<RestaurantRegistrationProps> = ({
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="p-6 space-y-8">
+      <form onSubmit={handleSubmit} className="p-6 sm:p-8 space-y-8">
         {/* Business Information Section */}
         <div>
           <div className="flex items-center mb-4">
             <MdBusiness className="text-blue-600 text-xl mr-3" />
-            <h3 className="text-xl font-semibold text-gray-800">Business Information</h3>
+            <h3 className="text-lg sm:text-xl font-semibold text-gray-800">Business Information</h3>
           </div>
           
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Business Name */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -241,7 +241,7 @@ export const RestaurantRegistration: React.FC<RestaurantRegistrationProps> = ({
                   value={formData.businessName}
                   onChange={handleInputChange}
                   placeholder="Enter your restaurant name"
-                  className={`w-full pl-10 pr-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 ${
+                  className={`w-full pl-10 pr-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 text-sm sm:text-base ${
                     errors.businessName ? 'border-red-500' : 'border-gray-300'
                   }`}
                 />
@@ -262,7 +262,7 @@ export const RestaurantRegistration: React.FC<RestaurantRegistrationProps> = ({
                   name="businessType"
                   value={formData.businessType}
                   onChange={handleInputChange}
-                  className={`w-full pl-10 pr-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 appearance-none ${
+                  className={`w-full pl-10 pr-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 appearance-none text-sm sm:text-base ${
                     errors.businessType ? 'border-red-500' : 'border-gray-300'
                   }`}
                 >
@@ -290,7 +290,7 @@ export const RestaurantRegistration: React.FC<RestaurantRegistrationProps> = ({
                   value={formData.email}
                   onChange={handleInputChange}
                   placeholder="restaurant@example.com"
-                  className={`w-full pl-10 pr-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 ${
+                  className={`w-full pl-10 pr-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 text-sm sm:text-base ${
                     errors.email ? 'border-red-500' : 'border-gray-300'
                   }`}
                 />
@@ -313,7 +313,7 @@ export const RestaurantRegistration: React.FC<RestaurantRegistrationProps> = ({
                   value={formData.phone}
                   onChange={handleInputChange}
                   placeholder="(555) 123-4567"
-                  className={`w-full pl-10 pr-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 ${
+                  className={`w-full pl-10 pr-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 text-sm sm:text-base ${
                     errors.phone ? 'border-red-500' : 'border-gray-300'
                   }`}
                 />
@@ -336,7 +336,7 @@ export const RestaurantRegistration: React.FC<RestaurantRegistrationProps> = ({
                   value={formData.website}
                   onChange={handleInputChange}
                   placeholder="https://yourrestaurant.com"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl border-2 border-gray-300 transition-all focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border-2 border-gray-300 transition-all focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
                 />
               </div>
             </div>
@@ -350,7 +350,7 @@ export const RestaurantRegistration: React.FC<RestaurantRegistrationProps> = ({
                 name="cuisineType"
                 value={formData.cuisineType}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 rounded-xl border-2 border-gray-300 transition-all focus:ring-2 focus:ring-blue-500 appearance-none"
+                className="w-full px-4 py-3 rounded-xl border-2 border-gray-300 transition-all focus:ring-2 focus:ring-blue-500 appearance-none text-sm sm:text-base"
               >
                 <option value="">Select cuisine type</option>
                 {cuisineTypes.map(cuisine => (
@@ -370,7 +370,7 @@ export const RestaurantRegistration: React.FC<RestaurantRegistrationProps> = ({
                   name="priceRange"
                   value={formData.priceRange}
                   onChange={handleInputChange}
-                  className="w-full pl-10 pr-4 py-3 rounded-xl border-2 border-gray-300 transition-all focus:ring-2 focus:ring-blue-500 appearance-none"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border-2 border-gray-300 transition-all focus:ring-2 focus:ring-blue-500 appearance-none text-sm sm:text-base"
                 >
                   <option value="">Select price range</option>
                   {priceRanges.map(range => (
@@ -395,7 +395,7 @@ export const RestaurantRegistration: React.FC<RestaurantRegistrationProps> = ({
                   placeholder="2020"
                   min="1800"
                   max={new Date().getFullYear()}
-                  className="w-full pl-10 pr-4 py-3 rounded-xl border-2 border-gray-300 transition-all focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border-2 border-gray-300 transition-all focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
                 />
               </div>
             </div>
@@ -412,7 +412,7 @@ export const RestaurantRegistration: React.FC<RestaurantRegistrationProps> = ({
               onChange={handleInputChange}
               placeholder="Tell us about your restaurant..."
               rows={4}
-              className="w-full px-4 py-3 rounded-xl border-2 border-gray-300 transition-all focus:ring-2 focus:ring-blue-500 resize-none"
+              className="w-full px-4 py-3 rounded-xl border-2 border-gray-300 transition-all focus:ring-2 focus:ring-blue-500 resize-none text-sm sm:text-base"
             />
           </div>
         </div>
@@ -421,10 +421,10 @@ export const RestaurantRegistration: React.FC<RestaurantRegistrationProps> = ({
         <div>
           <div className="flex items-center mb-4">
             <FaMapMarkerAlt className="text-blue-600 text-xl mr-3" />
-            <h3 className="text-xl font-semibold text-gray-800">Business Address</h3>
+            <h3 className="text-lg sm:text-xl font-semibold text-gray-800">Business Address</h3>
           </div>
           
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Street Address */}
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -438,7 +438,7 @@ export const RestaurantRegistration: React.FC<RestaurantRegistrationProps> = ({
                   value={formData.streetAddress}
                   onChange={handleInputChange}
                   placeholder="123 Main Street"
-                  className={`w-full pl-10 pr-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 ${
+                  className={`w-full pl-10 pr-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 text-sm sm:text-base ${
                     errors.streetAddress ? 'border-red-500' : 'border-gray-300'
                   }`}
                 />
@@ -459,7 +459,7 @@ export const RestaurantRegistration: React.FC<RestaurantRegistrationProps> = ({
                 value={formData.city}
                 onChange={handleInputChange}
                 placeholder="New York"
-                className={`w-full px-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 ${
+                className={`w-full px-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 text-sm sm:text-base ${
                   errors.city ? 'border-red-500' : 'border-gray-300'
                 }`}
               />
@@ -479,7 +479,7 @@ export const RestaurantRegistration: React.FC<RestaurantRegistrationProps> = ({
                 value={formData.state}
                 onChange={handleInputChange}
                 placeholder="NY"
-                className={`w-full px-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 ${
+                className={`w-full px-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 text-sm sm:text-base ${
                   errors.state ? 'border-red-500' : 'border-gray-300'
                 }`}
               />
@@ -499,7 +499,7 @@ export const RestaurantRegistration: React.FC<RestaurantRegistrationProps> = ({
                 value={formData.zipCode}
                 onChange={handleInputChange}
                 placeholder="10001"
-                className={`w-full px-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 ${
+                className={`w-full px-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 text-sm sm:text-base ${
                   errors.zipCode ? 'border-red-500' : 'border-gray-300'
                 }`}
               />
@@ -518,7 +518,7 @@ export const RestaurantRegistration: React.FC<RestaurantRegistrationProps> = ({
                 name="country"
                 value={formData.country}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 rounded-xl border-2 border-gray-300 transition-all focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-3 rounded-xl border-2 border-gray-300 transition-all focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
                 readOnly
               />
             </div>
@@ -529,10 +529,10 @@ export const RestaurantRegistration: React.FC<RestaurantRegistrationProps> = ({
         <div>
           <div className="flex items-center mb-4">
             <FaUser className="text-blue-600 text-xl mr-3" />
-            <h3 className="text-xl font-semibold text-gray-800">Owner Information</h3>
+            <h3 className="text-lg sm:text-xl font-semibold text-gray-800">Owner Information</h3>
           </div>
           
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* First Name */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -544,7 +544,7 @@ export const RestaurantRegistration: React.FC<RestaurantRegistrationProps> = ({
                 value={formData.firstName}
                 onChange={handleInputChange}
                 placeholder="John"
-                className={`w-full px-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 ${
+                className={`w-full px-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 text-sm sm:text-base ${
                   errors.firstName ? 'border-red-500' : 'border-gray-300'
                 }`}
               />
@@ -564,7 +564,7 @@ export const RestaurantRegistration: React.FC<RestaurantRegistrationProps> = ({
                 value={formData.lastName}
                 onChange={handleInputChange}
                 placeholder="Smith"
-                className={`w-full px-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 ${
+                className={`w-full px-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 text-sm sm:text-base ${
                   errors.lastName ? 'border-red-500' : 'border-gray-300'
                 }`}
               />
@@ -586,7 +586,7 @@ export const RestaurantRegistration: React.FC<RestaurantRegistrationProps> = ({
                   value={formData.username}
                   onChange={handleInputChange}
                   placeholder="johnsmith123"
-                  className={`w-full pl-10 pr-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 ${
+                  className={`w-full pl-10 pr-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 text-sm sm:text-base ${
                     errors.username ? 'border-red-500' : 'border-gray-300'
                   }`}
                 />
@@ -607,7 +607,7 @@ export const RestaurantRegistration: React.FC<RestaurantRegistrationProps> = ({
                 value={formData.password}
                 onChange={handleInputChange}
                 placeholder="Create a secure password"
-                className={`w-full px-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 ${
+                className={`w-full px-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 text-sm sm:text-base ${
                   errors.password ? 'border-red-500' : 'border-gray-300'
                 }`}
               />
@@ -627,7 +627,7 @@ export const RestaurantRegistration: React.FC<RestaurantRegistrationProps> = ({
                 value={formData.confirmPassword}
                 onChange={handleInputChange}
                 placeholder="Confirm your password"
-                className={`w-full px-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 ${
+                className={`w-full px-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 text-sm sm:text-base ${
                   errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
                 }`}
               />
@@ -666,15 +666,15 @@ export const RestaurantRegistration: React.FC<RestaurantRegistrationProps> = ({
 
           {/* Checkboxes */}
           <div className="space-y-3">
-            <label className="flex items-center space-x-3 cursor-pointer group">
+            <label className="flex items-start sm:items-center space-x-3 cursor-pointer group">
               <input
                 type="checkbox"
                 name="agreeToTerms"
                 checked={formData.agreeToTerms}
                 onChange={handleInputChange}
-                className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 mt-1 sm:mt-0"
               />
-              <span className="text-gray-700 group-hover:text-gray-900 transition-colors">
+              <span className="text-gray-700 group-hover:text-gray-900 transition-colors text-sm">
                 I agree to the{' '}
                 <a href="/terms" className="text-blue-600 hover:underline font-medium">
                   Terms of Service
@@ -689,15 +689,15 @@ export const RestaurantRegistration: React.FC<RestaurantRegistrationProps> = ({
               <p className="text-red-500 text-xs">{errors.agreeToTerms}</p>
             )}
 
-            <label className="flex items-center space-x-3 cursor-pointer group">
+            <label className="flex items-start sm:items-center space-x-3 cursor-pointer group">
               <input
                 type="checkbox"
                 name="newsletter"
                 checked={formData.newsletter}
                 onChange={handleInputChange}
-                className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 mt-1 sm:mt-0"
               />
-              <span className="text-gray-700 group-hover:text-gray-900 transition-colors">
+              <span className="text-gray-700 group-hover:text-gray-900 transition-colors text-sm">
                 Subscribe to our newsletter for updates and promotional offers
               </span>
             </label>
@@ -708,7 +708,7 @@ export const RestaurantRegistration: React.FC<RestaurantRegistrationProps> = ({
         <button
           type="submit"
           disabled={isLoading}
-          className={`w-full py-4 rounded-xl font-semibold text-lg text-white transition-all duration-300 flex items-center justify-center space-x-2 ${
+          className={`w-full py-3 sm:py-4 rounded-xl font-semibold text-base sm:text-lg text-white transition-all duration-300 flex items-center justify-center space-x-2 ${
             isLoading
               ? 'bg-gray-400 cursor-not-allowed'
               : 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 transform hover:scale-105 shadow-lg'

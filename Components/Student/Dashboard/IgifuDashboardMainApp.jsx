@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   FaBell, FaSearch, FaUtensils, FaWallet, FaGift, FaMoneyBill,
   FaEllipsisH, FaUserCircle
@@ -19,7 +19,7 @@ function IgifuDashboardMainApp() {
   const {
     activePage, setActivePage, greeting, showToast, toast,
     handleOrder,
-    handleOrderSubmit,
+    handleOrderSubmit, setIsCardLocked,
     purchasedPlans, selectedCard, wallets, isCardLocked,
     handleTopUp, handleBuyCardClick, setShowUnlockModal,
     setShowExchangeModal, handleManualUnlock, handleUseMeal,
@@ -29,6 +29,24 @@ function IgifuDashboardMainApp() {
     ...modalProps
   } = useApp();
 
+  // Centralized effect to prevent background scroll when any modal is open
+  useEffect(() => {
+    const { showAndroidPrompt, showEnhancedPayment, showPaymentSuccess, showUnlockModal, showExchangeModal, showShareModal, showPlanDetails, showOrderModal } = modalProps;
+    const isModalOpen = showAndroidPrompt || showEnhancedPayment || showPaymentSuccess || showUnlockModal || showExchangeModal || showShareModal || showPlanDetails || showOrderModal;
+
+    if (isModalOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    // Cleanup function to reset the style when the component unmounts
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [modalProps]);
+
+
   return (
     <div className="min-h-screen font-sans flex flex-col bg-gray-50 dark:bg-[#0b0b12] transition-colors duration-300">
       {/* Header */}
@@ -36,16 +54,16 @@ function IgifuDashboardMainApp() {
         <div className="absolute inset-0">
              {/* <img src="/mnt/data/gtuu.JPG" alt="header-bg" className="w-full h-full object-cover opacity-60" /> */}
              <div className="absolute inset-0 bg-gradient-to-r from-black/50 to-transparent"></div>
-        </div> 
-        <div className="relative z-10 flex items-center justify-between max-w-6xl mx-auto px-4 py-3">
+        </div>
+        <div className="relative z-10 flex items-center justify-between max-w-6xl mx-auto px-3 sm:px-4 py-3">
           <div className="flex items-center gap-3">
-            <motion.div whileTap={tapAnimation} className="text-2xl bg-white/20 backdrop-blur-md p-2 rounded-xl shadow-lg">🍽️</motion.div>
-            <div><div className="text-xs opacity-90">{greeting}</div><div className="font-bold">Welcome, Student</div></div>
+            <motion.div whileTap={tapAnimation} className="text-xl sm:text-2xl bg-white/20 backdrop-blur-md p-2 rounded-xl shadow-lg">🍽️</motion.div>
+            <div><div className="text-xs opacity-90">{greeting}</div><div className="font-bold text-sm sm:text-base">Welcome, Student</div></div>
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
             <motion.button whileTap={tapAnimation} whileHover={hoverScale} onClick={() => setActivePage("Restoz")} className="p-2 sm:p-2.5 rounded-full bg-white/20 backdrop-blur-md hover:bg-white/30 transition-all"><FaSearch className="text-sm sm:text-lg" /></motion.button>
             <motion.button whileTap={tapAnimation} whileHover={hoverScale} onClick={() => showToast('You have 3 new notifications', 'info')} className="p-2 sm:p-2.5 rounded-full bg-white/20 backdrop-blur-md hover:bg-white/30 transition-all relative">
-              <FaBell className="text-sm sm:text-lg" /><span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white animate-pulse" />
+              <FaBell className="text-sm sm:text-lg" /><span className="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-gray-900 animate-pulse" />
             </motion.button>
             <motion.button whileTap={tapAnimation} whileHover={hoverScale} onClick={() => setActivePage("More")} className="p-2 sm:p-2.5 rounded-full bg-white/20 backdrop-blur-md hover:bg-white/30 transition-all"><FaUserCircle className="text-sm sm:text-lg" /></motion.button>
           </div>
@@ -53,10 +71,10 @@ function IgifuDashboardMainApp() {
       </header>
 
       {/* Info Ticker */}
-      <div className="bg-gradient-to-r from-yellow-400 to-orange-400 text-black px-4 py-3 shadow-md">
+      <div className="bg-gradient-to-r from-yellow-400 to-orange-400 text-black px-3 sm:px-4 py-2 sm:py-3 shadow-md">
         <div className="mx-auto w-full max-w-6xl flex items-center gap-3">
           <span className="w-2.5 h-2.5 rounded-full bg-black animate-pulse shrink-0" />
-          <span className="font-bold text-base truncate">🎉 New payment options! Enjoy no-fee top-ups and instant card unlocking. Share meals with friends!</span>
+          <span className="font-bold text-xs sm:text-sm truncate">🎉 New payment options! Enjoy no-fee top-ups and instant card unlocking. Share meals with friends!</span>
         </div>
       </div>
 
@@ -84,7 +102,16 @@ function IgifuDashboardMainApp() {
               setSelectedCard={setSelectedCard}
             />
           )}
-          {activePage === "Restoz" && <RestozPage key="restoz" showToast={showToast} onOrder={handleOrder} />}
+          {activePage === "Restoz" && (
+            <RestozPage
+              key="restoz"
+              showToast={showToast}
+              onOrder={handleOrder}
+              subscriptions={modalProps.subscriptions}
+              isCardLocked={isCardLocked}
+              onUnlock={handleManualUnlock}
+            />
+          )}
           {activePage === "Earn" && <EarnPage key="earn" />}
           {activePage === "Loans" && <LoansPage key="loans" />}
           {activePage === "More" && (

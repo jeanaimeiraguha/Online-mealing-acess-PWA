@@ -189,7 +189,7 @@ export const Auth: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 relative py-6">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 relative py-6 px-4 sm:px-6 lg:px-8">
       <Toaster position="top-center" />
       
       {/* Back Button */}
@@ -197,14 +197,14 @@ export const Auth: React.FC = () => {
         <button
           onClick={handleBack}
           disabled={isLoading}
-          className="absolute top-4 left-4 bg-white text-gray-800 px-4 py-2 rounded-full font-semibold hover:bg-gray-50 transition-all transform hover:scale-105 flex items-center shadow-lg"
+          className="absolute top-4 left-4 bg-white text-gray-800 px-4 py-2 rounded-full font-semibold hover:bg-gray-50 transition-all transform hover:scale-105 flex items-center shadow-lg z-10"
         >
           <span className="mr-2">←</span> Back
         </button>
       )}
 
       {/* Main Content */}
-      <div className="w-full max-w-md mx-auto px-4">
+      <div className="w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl mx-auto">
         {renderCurrentStep()}
       </div>
     </div>
@@ -214,49 +214,49 @@ export const Auth: React.FC = () => {
 // Role Selection Component
 const RoleSelection: React.FC<{ onRoleSelect: (role: 'student' | 'restaurant') => void }> = ({ onRoleSelect }) => {
   return (
-    <div className="w-full max-w-md mx-auto text-center">
+    <div className="w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl mx-auto text-center">
       <div className="mb-8">
-        <h2 className="text-4xl font-bold text-gray-800 mb-4">Welcome to YouWare</h2>
-        <p className="text-gray-600 text-lg">Choose how you want to join us</p>
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-800 mb-4">Welcome to YouWare</h2>
+        <p className="text-gray-600 text-base sm:text-lg lg:text-xl">Choose how you want to join us</p>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-4 md:space-y-6">
         <button
           onClick={() => onRoleSelect('student')}
-          className="w-full p-6 bg-white rounded-2xl shadow-xl border-2 border-transparent hover:border-blue-500 hover:bg-blue-50 transition-all duration-300 flex items-center justify-between group transform hover:scale-105 hover:shadow-2xl"
+          className="w-full p-4 sm:p-6 bg-white rounded-2xl shadow-xl border-2 border-transparent hover:border-blue-500 hover:bg-blue-50 transition-all duration-300 flex items-center justify-between group transform hover:scale-105 hover:shadow-2xl"
         >
           <div className="flex items-center space-x-4">
-            <div className="bg-gradient-to-br from-blue-100 to-blue-200 p-4 rounded-full group-hover:from-blue-200 group-hover:to-blue-300 transition-all duration-300 transform group-hover:rotate-12">
-              <svg className="text-blue-600 text-2xl" fill="currentColor" viewBox="0 0 20 20">
+            <div className="bg-gradient-to-br from-blue-100 to-blue-200 p-3 sm:p-4 rounded-full group-hover:from-blue-200 group-hover:to-blue-300 transition-all duration-300 transform group-hover:rotate-12">
+              <svg className="text-blue-600 text-xl sm:text-2xl" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
             <div className="text-left">
-              <h3 className="text-xl font-semibold text-gray-800">I'm a Student</h3>
-              <p className="text-gray-500 text-sm">Order food from restaurants and manage your preferences</p>
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-800">I'm a Student</h3>
+              <p className="text-gray-500 text-xs sm:text-sm">Order food from restaurants and manage your preferences</p>
             </div>
           </div>
-          <svg className="text-gray-400 group-hover:text-blue-600 transition-all transform group-hover:translate-x-2" width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+          <svg className="text-gray-400 group-hover:text-blue-600 transition-all transform group-hover:translate-x-2 w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
           </svg>
         </button>
 
         <button
           onClick={() => onRoleSelect('restaurant')}
-          className="w-full p-6 bg-white rounded-2xl shadow-xl border-2 border-transparent hover:border-green-500 hover:bg-green-50 transition-all duration-300 flex items-center justify-between group transform hover:scale-105 hover:shadow-2xl"
+          className="w-full p-4 sm:p-6 bg-white rounded-2xl shadow-xl border-2 border-transparent hover:border-green-500 hover:bg-green-50 transition-all duration-300 flex items-center justify-between group transform hover:scale-105 hover:shadow-2xl"
         >
           <div className="flex items-center space-x-4">
-            <div className="bg-gradient-to-br from-green-100 to-green-200 p-4 rounded-full group-hover:from-green-200 group-hover:to-green-300 transition-all duration-300 transform group-hover:rotate-12">
-              <svg className="text-green-600 text-2xl" fill="currentColor" viewBox="0 0 20 20">
+            <div className="bg-gradient-to-br from-green-100 to-green-200 p-3 sm:p-4 rounded-full group-hover:from-green-200 group-hover:to-green-300 transition-all duration-300 transform group-hover:rotate-12">
+              <svg className="text-green-600 text-xl sm:text-2xl" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
               </svg>
             </div>
             <div className="text-left">
-              <h3 className="text-xl font-semibold text-gray-800">I'm a Restaurant Owner</h3>
-              <p className="text-gray-500 text-sm">Register your restaurant and manage orders</p>
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-800">I'm a Restaurant Owner</h3>
+              <p className="text-gray-500 text-xs sm:text-sm">Register your restaurant and manage orders</p>
             </div>
           </div>
-          <svg className="text-gray-400 group-hover:text-green-600 transition-all transform group-hover:translate-x-2" width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+          <svg className="text-gray-400 group-hover:text-green-600 transition-all transform group-hover:translate-x-2 w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
           </svg>
         </button>
@@ -268,26 +268,26 @@ const RoleSelection: React.FC<{ onRoleSelect: (role: 'student' | 'restaurant') =
 // Dashboard Component (placeholder)
 const Dashboard: React.FC<{ userRole: 'student' | 'restaurant' }> = ({ userRole }) => {
   return (
-    <div className="w-full max-w-2xl mx-auto bg-white p-8 rounded-2xl shadow-2xl text-center">
-      <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-        <svg className="text-green-600 text-2xl" fill="currentColor" viewBox="0 0 20 20">
+    <div className="w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl mx-auto bg-white p-6 sm:p-8 rounded-2xl shadow-2xl text-center">
+      <div className="bg-green-100 w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg className="text-green-600 text-xl sm:text-2xl" fill="currentColor" viewBox="0 0 20 20">
           <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
         </svg>
       </div>
-      <h2 className="text-3xl font-bold text-gray-800 mb-4">Welcome to Your Dashboard!</h2>
-      <p className="text-gray-600 mb-6">
+      <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">Welcome to Your Dashboard!</h2>
+      <p className="text-gray-600 mb-6 text-sm sm:text-base">
         You are now logged in as a {userRole}. This is where your main application would be.
       </p>
       <div className="space-y-4">
         <div className="p-4 bg-blue-50 rounded-xl">
-          <h3 className="font-semibold text-blue-800 mb-2">Account Status</h3>
+          <h3 className="font-semibold text-blue-800 mb-2 text-sm sm:text-base">Account Status</h3>
           <p className="text-sm text-blue-700">✅ Email verified</p>
           <p className="text-sm text-blue-700">✅ Account created</p>
         </div>
       </div>
       <button
         onClick={() => window.location.reload()}
-        className="mt-6 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl font-semibold hover:from-blue-600 hover:to-indigo-700 transition-all"
+        className="mt-6 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl font-semibold hover:from-blue-600 hover:to-indigo-700 transition-all text-sm sm:text-base"
       >
         Logout
       </button>

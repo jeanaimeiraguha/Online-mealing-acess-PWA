@@ -56,8 +56,8 @@ const EnhancedPaymentModal = ({ defaultAmount = 10000, onPay, onClose, processin
 
     setOtpError('');
     setProcessing(true);
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    onPay(paymentMethod, phoneNumber, totalAmount);
+    onPay(paymentMethod, phoneNumber, totalAmount); // Pass arguments to onPay
+    await new Promise(resolve => setTimeout(resolve, 1000)); // Keep promise for visual feedback
   };
 
   const handleShowUSSD = () => {
@@ -69,12 +69,12 @@ const EnhancedPaymentModal = ({ defaultAmount = 10000, onPay, onClose, processin
   if (showOTP) {
     return (
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
-        <motion.div variants={modalMotion} initial="initial" animate="animate" exit="exit" onClick={e => e.stopPropagation()} className="w-full max-w-md bg-white dark:bg-gray-900 rounded-3xl p-6 shadow-2xl">
+        <motion.div variants={modalMotion} initial="initial" animate="animate" exit="exit" onClick={e => e.stopPropagation()} className="w-full max-w-md bg-white dark:bg-gray-900 rounded-3xl p-4 sm:p-6 shadow-2xl m-4">
           <div className="text-center mb-6">
             <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
               <FaKey className="text-white text-2xl" />
             </div>
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Enter OTP Code</h3>
+            <h3 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-2">Enter OTP Code</h3>
             <p className="text-sm text-gray-600 dark:text-gray-400">
               We sent a 6-digit code to <strong>{phoneNumber}</strong>
             </p>
@@ -172,13 +172,13 @@ const EnhancedPaymentModal = ({ defaultAmount = 10000, onPay, onClose, processin
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
-      <motion.div variants={modalMotion} initial="initial" animate="animate" exit="exit" onClick={e => e.stopPropagation()} className="w-full max-w-md bg-white dark:bg-gray-900 rounded-3xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
-        <h3 className="text-2xl font-bold text-center mb-6 text-gray-900 dark:text-white">Add Money to Card</h3>
+      <motion.div variants={modalMotion} initial="initial" animate="animate" exit="exit" onClick={e => e.stopPropagation()} className="w-full max-w-md bg-white dark:bg-gray-900 rounded-3xl p-4 sm:p-6 shadow-2xl m-4 overflow-y-auto max-h-[90vh]">
+        <h3 className="text-xl sm:text-2xl font-bold text-center mb-6 text-gray-900 dark:text-white">Add Money to Card</h3>
 
         <div className="space-y-4">
           <div>
             <label className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-2 block">Amount (RWF)</label>
-            <input type="number" min="500" value={amount} onChange={(e) => setAmount(parseInt(e.target.value) || 0)} placeholder="Enter amount e.g., 10000" className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white" />
+            <input type="number" min="500" value={amount} onChange={(e) => setAmount(parseInt(e.target.value) || 0)} placeholder="Enter amount e.g., 10000" className="w-full px-4 py-2.5 sm:py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white" />
           </div>
 
           <div>
@@ -240,7 +240,7 @@ const EnhancedPaymentModal = ({ defaultAmount = 10000, onPay, onClose, processin
               }}
               onBlur={validatePhone}
               placeholder={paymentMethod === 'mtn' ? '078XXXXXXX' : '072XXXXXXX'}
-              className={`w-full px-4 py-3 rounded-xl border ${phoneError ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} bg-white dark:bg-gray-800 text-gray-900 dark:text-white`}
+              className={`w-full px-4 py-2.5 sm:py-3 rounded-xl border ${phoneError ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} bg-white dark:bg-gray-800 text-gray-900 dark:text-white`}
             />
             {phoneError && (
               <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-red-500 text-xs mt-1">
@@ -266,7 +266,7 @@ const EnhancedPaymentModal = ({ defaultAmount = 10000, onPay, onClose, processin
           </div>
 
           <div className="flex gap-3">
-            <motion.button whileTap={tapAnimation} onClick={onClose} className="flex-1 py-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl font-bold" disabled={processing}>Cancel</motion.button>
+            <motion.button whileTap={tapAnimation} onClick={onClose} className="flex-1 py-3 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-xl font-bold" disabled={processing}>Cancel</motion.button>
             <motion.button whileTap={tapAnimation} onClick={handlePayment} disabled={processing || !phoneNumber || amount <= 0 || phoneError} className={`flex-[2] py-3 ${paymentMethod === 'mtn' ? 'bg-yellow-400 text-black' : 'bg-red-500 text-white'} rounded-xl font-bold disabled:opacity-50 flex items-center justify-center gap-2`}>
               {processing ? <FaSpinner className="animate-spin" /> : <>Continue</>}
             </motion.button>

@@ -27,7 +27,7 @@ const MorePage = ({
         </div>
       </motion.div>
 
-      <div className="space-y-3">
+      <div className="space-y-3 mt-6">
         <motion.div whileHover={{ scale: 1.02 }} whileTap={tapAnimation} onClick={() => showToast('Profile settings coming soon!', 'info')} className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl p-4 border border-gray-200 dark:border-gray-700 flex items-center justify-between cursor-pointer">
           <div className="flex items-center gap-3"><FaUserCircle className="text-xl sm:text-2xl text-gray-600 dark:text-gray-400" /><span className="font-medium text-gray-800 dark:text-gray-100 text-sm sm:text-base">Edit Profile</span></div>
           <FaChevronRight className="text-gray-400" />
@@ -41,9 +41,16 @@ const MorePage = ({
         </motion.div>
 
         {selectedCard === "Meal Card" && (
-          <motion.div whileHover={{ scale: 1.02 }} whileTap={tapAnimation} onClick={isCardLocked ? handleManualUnlock : () => setIsCardLocked(true)} className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl p-4 border border-gray-200 dark:border-gray-700 flex items-center justify-between cursor-pointer">
+          <motion.div
+            whileHover={{ scale: 1.02 }}
+            whileTap={tapAnimation}
+            onClick={() => {
+              if (isCardLocked) handleManualUnlock();
+              else showToast("Card is already unlocked.", "info");
+            }}
+            className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl p-4 border border-gray-200 dark:border-gray-700 flex items-center justify-between cursor-pointer">
             <div className="flex items-center gap-3">{isCardLocked ? <FaLock className="text-xl sm:text-2xl text-red-600 dark:text-red-400" /> : <FaUnlock className="text-xl sm:text-2xl text-green-600 dark:text-green-400" />}<span className="font-medium text-gray-800 dark:text-gray-100 text-sm sm:text-base">Card {isCardLocked ? 'Locked' : 'Unlocked'}</span></div>
-            <span className={`text-xs font-bold px-3 py-1 rounded-full ${isCardLocked ? 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400' : 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400'}`}>{isCardLocked ? 'Tap to Unlock' : 'Tap to Lock'}</span>
+            <span className={`text-xs font-bold px-3 py-1 rounded-full ${isCardLocked ? 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400' : 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400'}`}>{isCardLocked ? 'Tap to Unlock' : 'Unlocked'}</span>
           </motion.div>
         )}
 
@@ -57,7 +64,17 @@ const MorePage = ({
           <FaChevronRight className="text-gray-400" />
         </motion.div>
 
-        <motion.div whileHover={{ scale: 1.02 }} whileTap={tapAnimation} onClick={() => { setSelectedCard("No Card"); setIsCardLocked(false); setWallets({ meal: 0, flexie: 0 }); setPurchasedPlans([]); showToast('Logged out successfully', 'info'); setActivePage("Restoz"); }} className="bg-red-50 dark:bg-red-900/20 rounded-xl sm:rounded-2xl p-4 border border-red-200 dark:border-red-700 flex items-center justify-between cursor-pointer">
+        <motion.div
+          whileHover={{ scale: 1.02 }}
+          whileTap={tapAnimation}
+          onClick={() => {
+            setSelectedCard("No Card");
+            setIsCardLocked(true);
+            setWallets({ meal: 0, flexie: 0 });
+            setPurchasedPlans([]);
+            showToast('Logged out successfully', 'info');
+            setActivePage("Restoz");
+          }} className="bg-red-50 dark:bg-red-900/20 rounded-xl sm:rounded-2xl p-4 border border-red-200 dark:border-red-700 flex items-center justify-between cursor-pointer">
           <div className="flex items-center gap-3"><FaSignOutAlt className="text-xl sm:text-2xl text-red-600 dark:text-red-400" /><span className="font-medium text-red-600 dark:text-red-400 text-sm sm:text-base">Sign Out</span></div>
           <FaChevronRight className="text-red-400" />
         </motion.div>

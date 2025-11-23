@@ -37,24 +37,11 @@ const MyIgifuPage = ({
             isLocked={isCardLocked}
             onBuyCard={handleBuyCardClick}
             onTopUp={handleTopUp}
-            onExchange={() => {
-              if (isCardLocked) {
-                showToast("Please unlock your card first", "warn");
-                setShowUnlockModal(true);
-                return;
-              }
-              setShowExchangeModal(true);
-            }}
+            onExchange={() => setShowExchangeModal(true)}
             onUnlock={handleManualUnlock}
           />
         </div>
 
-        {selectedCard === "Meal Card" && (
-          <>
-
-
-          </>
-        )}
       </div>
     </motion.section>
   );

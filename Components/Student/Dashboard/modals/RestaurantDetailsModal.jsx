@@ -20,8 +20,8 @@ const RestaurantDetailsModal = ({ restaurant, onOrder, onClose }) => {
         initial="initial"
         animate="animate"
         exit="exit"
-        onClick={e => e.stopPropagation()}
-        className="w-full max-w-2xl bg-white dark:bg-gray-900 rounded-3xl overflow-hidden shadow-2xl max-h-[90vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-2xl bg-white dark:bg-gray-900 rounded-3xl overflow-hidden shadow-2xl m-4"
       >
         <div className="relative h-48">
           <img src={restaurant.image} alt={restaurant.name} className="w-full h-full object-cover" />
@@ -44,7 +44,7 @@ const RestaurantDetailsModal = ({ restaurant, onOrder, onClose }) => {
           </div>
         </div>
 
-        <div className="p-6">
+        <div className="p-6 max-h-[calc(100vh-16rem)] overflow-y-auto">
           <div className="mb-6">
             <h3 className="font-bold text-gray-900 dark:text-white mb-3 text-lg flex items-center gap-2">
               <FaInfoCircle className="text-blue-500" />
@@ -61,7 +61,7 @@ const RestaurantDetailsModal = ({ restaurant, onOrder, onClose }) => {
                 <FaUtensils className="text-orange-500" />
                 Our Specialties
               </h3>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                 {restaurant.specialties.map((item, idx) => (
                   <div key={idx} className="flex items-center gap-2 p-3 bg-orange-50 dark:bg-orange-900/20 rounded-lg border border-orange-200 dark:border-orange-700">
                     {item.icon}
@@ -107,7 +107,7 @@ const RestaurantDetailsModal = ({ restaurant, onOrder, onClose }) => {
                 <FaStar className="text-yellow-500" />
                 Popular Dishes
               </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {restaurant.popularDishes.map((dish, idx) => (
                   <motion.div key={idx} whileHover={{ scale: 1.02 }} className="flex items-center justify-between p-3 bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 rounded-lg border border-orange-200 dark:border-orange-700">
                     <div className="flex items-center gap-3">
@@ -146,7 +146,7 @@ const RestaurantDetailsModal = ({ restaurant, onOrder, onClose }) => {
                 whileHover={{ scale: 1.02 }}
                 onClick={() => {
                   onOrder(restaurant, period);
-                  onClose();
+                  if (onClose) onClose();
                 }}
                 className="p-4 rounded-xl bg-white dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600/50 text-left transition-all hover:shadow-lg hover:border-blue-500"
               >

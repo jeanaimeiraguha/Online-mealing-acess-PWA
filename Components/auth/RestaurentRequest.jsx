@@ -118,50 +118,50 @@ export const RestaurantRequest: React.FC<RestaurantRequestProps> = ({
   if (isSubmitted) {
     return (
       <div className="w-full max-w-2xl mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden">
-        <div className="bg-gradient-to-r from-green-500 to-blue-600 p-8 text-white text-center">
-          <div className="bg-white/20 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-            <FaCheck className="text-3xl text-white" />
+        <div className="bg-gradient-to-r from-green-500 to-blue-600 p-6 sm:p-8 text-white text-center">
+          <div className="bg-white/20 w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+            <FaCheck className="text-2xl sm:text-3xl text-white" />
           </div>
-          <h2 className="text-3xl font-bold mb-4">Request Submitted Successfully!</h2>
-          <p className="text-green-100 text-lg">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-4">Request Submitted Successfully!</h2>
+          <p className="text-green-100 text-base sm:text-lg">
             Thank you for your interest in joining our platform.
           </p>
         </div>
         
-        <div className="p-8">
+        <div className="p-6 sm:p-8">
           <div className="space-y-6">
             <div className="text-center">
-              <h3 className="text-xl font-semibold text-gray-800 mb-4">What happens next?</h3>
-              <p className="text-gray-600">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4">What happens next?</h3>
+              <p className="text-gray-600 text-sm sm:text-base">
                 Our team will review your request and contact you within <strong>24 hours</strong> to assist with your restaurant registration.
               </p>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
               <div className="text-center p-4 bg-blue-50 rounded-xl">
                 <FaHeadphones className="text-blue-600 text-2xl mx-auto mb-2" />
-                <h4 className="font-semibold text-gray-800 mb-1">Team Review</h4>
+                <h4 className="font-semibold text-gray-800 mb-1 text-sm sm:text-base">Team Review</h4>
                 <p className="text-sm text-gray-600">We verify your business information</p>
               </div>
               
               <div className="text-center p-4 bg-green-50 rounded-xl">
                 <FaPhoneAlt className="text-green-600 text-2xl mx-auto mb-2" />
-                <h4 className="font-semibold text-gray-800 mb-1">Personal Contact</h4>
+                <h4 className="font-semibold text-gray-800 mb-1 text-sm sm:text-base">Personal Contact</h4>
                 <p className="text-sm text-gray-600">We call you to discuss registration</p>
               </div>
               
               <div className="text-center p-4 bg-purple-50 rounded-xl">
                 <FaCheck className="text-purple-600 text-2xl mx-auto mb-2" />
-                <h4 className="font-semibold text-gray-800 mb-1">Account Setup</h4>
+                <h4 className="font-semibold text-gray-800 mb-1 text-sm sm:text-base">Account Setup</h4>
                 <p className="text-sm text-gray-600">We help create your restaurant account</p>
               </div>
             </div>
 
-            <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6">
+            <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 sm:p-6">
               <div className="flex items-start space-x-3">
                 <FaClock className="text-yellow-600 text-xl mt-1" />
                 <div>
-                  <h4 className="font-semibold text-yellow-800 mb-2">Expected Response Time</h4>
+                  <h4 className="font-semibold text-yellow-800 mb-2 text-sm sm:text-base">Expected Response Time</h4>
                   <ul className="text-sm text-yellow-700 space-y-1">
                     <li>• Initial confirmation email: Within 1 hour</li>
                     <li>• Personal contact attempt: Within 24 hours</li>
@@ -172,7 +172,7 @@ export const RestaurantRequest: React.FC<RestaurantRequestProps> = ({
             </div>
 
             <div className="text-center space-y-4">
-              <p className="text-gray-600">
+              <p className="text-gray-600 text-sm sm:text-base">
                 Need to reach us immediately? Call us at{' '}
                 <a href="tel:+1-555-123-4567" className="text-blue-600 font-semibold hover:underline">
                   +1 (555) 123-4567
@@ -181,7 +181,7 @@ export const RestaurantRequest: React.FC<RestaurantRequestProps> = ({
               
               <button
                 onClick={() => window.location.reload()}
-                className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl font-semibold hover:from-blue-600 hover:to-purple-700 transition-all"
+                className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl font-semibold hover:from-blue-600 hover:to-purple-700 transition-all text-sm sm:text-base"
               >
                 Back to Home
               </button>
@@ -195,14 +195,14 @@ export const RestaurantRequest: React.FC<RestaurantRequestProps> = ({
   return (
     <div className="w-full max-w-4xl mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-8 text-white">
+      <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-6 sm:p-8 text-white">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-3xl font-bold mb-4">Request Restaurant Registration</h2>
-            <p className="text-blue-100 text-lg mb-4">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-4">Request Restaurant Registration</h2>
+            <p className="text-blue-100 text-base sm:text-lg mb-4">
               Our team will help you set up your restaurant account
             </p>
-            <div className="flex items-center space-x-6 text-sm">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-6 text-sm">
               <div className="flex items-center space-x-2">
                 <HiChatBubbleLeftRight className="text-blue-200" />
                 <span>Personal assistance</span>
@@ -221,7 +221,7 @@ export const RestaurantRequest: React.FC<RestaurantRequestProps> = ({
             <img 
               src="/src/assets/restaurant-request-design.jpeg" 
               alt="Restaurant Registration Request" 
-              className="w-32 h-32 rounded-xl object-cover border-4 border-white/20"
+              className="w-24 h-24 sm:w-32 sm:h-32 rounded-xl object-cover border-4 border-white/20"
               onError={(e) => {
                 const target = e.target as HTMLImageElement;
                 target.style.display = 'none';
@@ -231,11 +231,11 @@ export const RestaurantRequest: React.FC<RestaurantRequestProps> = ({
         </div>
 
         {/* Role Selection */}
-        <div className="flex space-x-4 mt-6">
+        <div className="flex space-x-2 sm:space-x-4 mt-6">
           <button
             type="button"
             onClick={() => onRoleChange('student')}
-            className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+            className={`px-3 py-2 sm:px-4 text-sm sm:text-base rounded-lg font-semibold transition-all ${
               selectedRole === 'student'
                 ? 'bg-white text-blue-600'
                 : 'bg-blue-500 text-white hover:bg-blue-400'
@@ -246,7 +246,7 @@ export const RestaurantRequest: React.FC<RestaurantRequestProps> = ({
           <button
             type="button"
             onClick={() => onRoleChange('restaurant')}
-            className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+            className={`px-3 py-2 sm:px-4 text-sm sm:text-base rounded-lg font-semibold transition-all ${
               selectedRole === 'restaurant'
                 ? 'bg-white text-blue-600'
                 : 'bg-blue-500 text-white hover:bg-blue-400'
@@ -257,16 +257,16 @@ export const RestaurantRequest: React.FC<RestaurantRequestProps> = ({
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="p-8 space-y-8">
+      <form onSubmit={handleSubmit} className="p-6 sm:p-8 space-y-8">
         {/* Info Banner */}
-        <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 sm:p-6">
           <div className="flex items-start space-x-4">
             <div className="bg-blue-100 p-3 rounded-full">
-              <HiChatBubbleLeftRight className="text-blue-600 text-xl" />
+              <HiChatBubbleLeftRight className="text-blue-600 text-lg sm:text-xl" />
             </div>
             <div>
-              <h3 className="font-semibold text-blue-800 mb-2">How It Works</h3>
-              <p className="text-blue-700 mb-3">
+              <h3 className="font-semibold text-blue-800 mb-2 text-sm sm:text-base">How It Works</h3>
+              <p className="text-blue-700 mb-3 text-sm sm:text-base">
                 Instead of filling out complex forms, simply share your basic information with our team. 
                 We'll contact you personally to guide you through the entire registration process.
               </p>
@@ -282,11 +282,11 @@ export const RestaurantRequest: React.FC<RestaurantRequestProps> = ({
         {/* Contact Information */}
         <div>
           <div className="flex items-center mb-6">
-            <FaUser className="text-blue-600 text-xl mr-3" />
-            <h3 className="text-xl font-semibold text-gray-800">Contact Information</h3>
+            <FaUser className="text-blue-600 text-lg sm:text-xl mr-3" />
+            <h3 className="text-lg sm:text-xl font-semibold text-gray-800">Contact Information</h3>
           </div>
           
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Business Name */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -300,7 +300,7 @@ export const RestaurantRequest: React.FC<RestaurantRequestProps> = ({
                   value={formData.businessName}
                   onChange={handleInputChange}
                   placeholder="Your Restaurant Name"
-                  className={`w-full pl-10 pr-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 ${
+                  className={`w-full pl-10 pr-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 text-sm sm:text-base ${
                     errors.businessName ? 'border-red-500' : 'border-gray-300'
                   }`}
                 />
@@ -323,7 +323,7 @@ export const RestaurantRequest: React.FC<RestaurantRequestProps> = ({
                   value={formData.ownerName}
                   onChange={handleInputChange}
                   placeholder="John Smith"
-                  className={`w-full pl-10 pr-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 ${
+                  className={`w-full pl-10 pr-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 text-sm sm:text-base ${
                     errors.ownerName ? 'border-red-500' : 'border-gray-300'
                   }`}
                 />
@@ -346,7 +346,7 @@ export const RestaurantRequest: React.FC<RestaurantRequestProps> = ({
                   value={formData.email}
                   onChange={handleInputChange}
                   placeholder="restaurant@example.com"
-                  className={`w-full pl-10 pr-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 ${
+                  className={`w-full pl-10 pr-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 text-sm sm:text-base ${
                     errors.email ? 'border-red-500' : 'border-gray-300'
                   }`}
                 />
@@ -369,7 +369,7 @@ export const RestaurantRequest: React.FC<RestaurantRequestProps> = ({
                   value={formData.phone}
                   onChange={handleInputChange}
                   placeholder="(555) 123-4567"
-                  className={`w-full pl-10 pr-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 ${
+                  className={`w-full pl-10 pr-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 text-sm sm:text-base ${
                     errors.phone ? 'border-red-500' : 'border-gray-300'
                   }`}
                 />
@@ -385,7 +385,7 @@ export const RestaurantRequest: React.FC<RestaurantRequestProps> = ({
             <label className="block text-sm font-medium text-gray-700 mb-3">
               Preferred Contact Method
             </label>
-            <div className="flex space-x-6">
+            <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-6">
               <label className="flex items-center space-x-3 cursor-pointer">
                 <input
                   type="radio"
@@ -417,11 +417,11 @@ export const RestaurantRequest: React.FC<RestaurantRequestProps> = ({
         {/* Business Information */}
         <div>
           <div className="flex items-center mb-6">
-            <FaMapMarkerAlt className="text-blue-600 text-xl mr-3" />
-            <h3 className="text-xl font-semibold text-gray-800">Business Information</h3>
+            <FaMapMarkerAlt className="text-blue-600 text-lg sm:text-xl mr-3" />
+            <h3 className="text-lg sm:text-xl font-semibold text-gray-800">Business Information</h3>
           </div>
           
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Business Address */}
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -435,7 +435,7 @@ export const RestaurantRequest: React.FC<RestaurantRequestProps> = ({
                   value={formData.businessAddress}
                   onChange={handleInputChange}
                   placeholder="123 Main Street"
-                  className={`w-full pl-10 pr-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 ${
+                  className={`w-full pl-10 pr-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 text-sm sm:text-base ${
                     errors.businessAddress ? 'border-red-500' : 'border-gray-300'
                   }`}
                 />
@@ -456,7 +456,7 @@ export const RestaurantRequest: React.FC<RestaurantRequestProps> = ({
                 value={formData.city}
                 onChange={handleInputChange}
                 placeholder="New York"
-                className={`w-full px-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 ${
+                className={`w-full px-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 text-sm sm:text-base ${
                   errors.city ? 'border-red-500' : 'border-gray-300'
                 }`}
               />
@@ -476,7 +476,7 @@ export const RestaurantRequest: React.FC<RestaurantRequestProps> = ({
                 value={formData.state}
                 onChange={handleInputChange}
                 placeholder="NY"
-                className={`w-full px-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 ${
+                className={`w-full px-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 text-sm sm:text-base ${
                   errors.state ? 'border-red-500' : 'border-gray-300'
                 }`}
               />
@@ -494,7 +494,7 @@ export const RestaurantRequest: React.FC<RestaurantRequestProps> = ({
                 name="businessType"
                 value={formData.businessType}
                 onChange={handleInputChange}
-                className={`w-full px-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 appearance-none ${
+                className={`w-full px-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 appearance-none text-sm sm:text-base ${
                   errors.businessType ? 'border-red-500' : 'border-gray-300'
                 }`}
               >
@@ -521,7 +521,7 @@ export const RestaurantRequest: React.FC<RestaurantRequestProps> = ({
                 placeholder="2020"
                 min="1800"
                 max={new Date().getFullYear()}
-                className="w-full px-4 py-3 rounded-xl border-2 border-gray-300 transition-all focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-3 rounded-xl border-2 border-gray-300 transition-all focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
               />
             </div>
           </div>
@@ -530,8 +530,8 @@ export const RestaurantRequest: React.FC<RestaurantRequestProps> = ({
         {/* Additional Information */}
         <div>
           <div className="flex items-center mb-6">
-            <HiChatBubbleLeftRight className="text-blue-600 text-xl mr-3" />
-            <h3 className="text-xl font-semibold text-gray-800">Additional Information</h3>
+            <HiChatBubbleLeftRight className="text-blue-600 text-lg sm:text-xl mr-3" />
+            <h3 className="text-lg sm:text-xl font-semibold text-gray-800">Additional Information</h3>
           </div>
           
           <div className="space-y-6">
@@ -546,18 +546,18 @@ export const RestaurantRequest: React.FC<RestaurantRequestProps> = ({
                 onChange={handleInputChange}
                 placeholder="Cuisine type, operating hours, special services, etc."
                 rows={4}
-                className="w-full px-4 py-3 rounded-xl border-2 border-gray-300 transition-all focus:ring-2 focus:ring-blue-500 resize-none"
+                className="w-full px-4 py-3 rounded-xl border-2 border-gray-300 transition-all focus:ring-2 focus:ring-blue-500 resize-none text-sm sm:text-base"
               />
             </div>
 
             {/* Urgent Request */}
-            <div className="flex items-center space-x-3">
+            <div className="flex items-start sm:items-center space-x-3">
               <input
                 type="checkbox"
                 name="urgent"
                 checked={formData.urgent}
                 onChange={handleInputChange}
-                className="w-5 h-5 text-red-600 border-gray-300 rounded focus:ring-red-500"
+                className="w-5 h-5 text-red-600 border-gray-300 rounded focus:ring-red-500 mt-1 sm:mt-0"
               />
               <div>
                 <label className="text-sm font-medium text-gray-700">
@@ -575,7 +575,7 @@ export const RestaurantRequest: React.FC<RestaurantRequestProps> = ({
         <button
           type="submit"
           disabled={isSubmitting}
-          className={`w-full py-4 rounded-xl font-semibold text-lg text-white transition-all duration-300 flex items-center justify-center space-x-2 ${
+          className={`w-full py-3 sm:py-4 rounded-xl font-semibold text-base sm:text-lg text-white transition-all duration-300 flex items-center justify-center space-x-2 ${
             isSubmitting
               ? 'bg-gray-400 cursor-not-allowed'
               : 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 transform hover:scale-105 shadow-lg'
@@ -595,12 +595,12 @@ export const RestaurantRequest: React.FC<RestaurantRequestProps> = ({
         </button>
 
         {/* Support Info */}
-        <div className="text-center p-6 bg-gray-50 rounded-xl">
-          <h4 className="font-semibold text-gray-800 mb-2">Need Immediate Help?</h4>
+        <div className="text-center p-4 sm:p-6 bg-gray-50 rounded-xl">
+          <h4 className="font-semibold text-gray-800 mb-2 text-sm sm:text-base">Need Immediate Help?</h4>
           <p className="text-gray-600 text-sm mb-3">
             Our support team is available to assist you right now
           </p>
-          <div className="flex items-center justify-center space-x-6 text-sm">
+          <div className="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-6 text-sm">
             <a href="tel:+1-555-123-4567" className="flex items-center space-x-2 text-blue-600 hover:text-blue-700">
               <FaPhone className="text-xs" />
               <span>Call: (555) 123-4567</span>

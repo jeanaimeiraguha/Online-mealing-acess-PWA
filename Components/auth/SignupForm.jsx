@@ -75,9 +75,9 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
   };
 
   return (
-    <div className="w-full max-w-md mx-auto bg-white p-8 rounded-2xl shadow-2xl">
+    <div className="w-full max-w-md mx-auto bg-white p-6 sm:p-8 rounded-2xl shadow-2xl sm:max-w-lg md:max-w-xl">
       <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">Create Your Account</h2>
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">Create Your Account</h2>
         <p className="text-gray-600 text-sm">
           Join {selectedRole === 'student' ? 'our food delivery platform' : 'our restaurant network'}
         </p>
@@ -90,7 +90,7 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
           <button
             type="button"
             onClick={() => onRoleChange('student')}
-            className={`p-3 rounded-xl border-2 transition-all flex items-center justify-center space-x-2 ${
+            className={`p-3 sm:p-4 rounded-xl border-2 transition-all flex items-center justify-center space-x-2 ${
               selectedRole === 'student'
                 ? 'border-blue-500 bg-blue-50 text-blue-700'
                 : 'border-gray-200 hover:border-gray-300'
@@ -102,7 +102,7 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
           <button
             type="button"
             onClick={() => onRoleChange('restaurant')}
-            className={`p-3 rounded-xl border-2 transition-all flex items-center justify-center space-x-2 ${
+            className={`p-3 sm:p-4 rounded-xl border-2 transition-all flex items-center justify-center space-x-2 ${
               selectedRole === 'restaurant'
                 ? 'border-green-500 bg-green-50 text-green-700'
                 : 'border-gray-200 hover:border-gray-300'
@@ -127,7 +127,7 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
               }
               value={formData.username}
               onChange={handleInputChange}
-              className={`w-full pl-10 pr-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 ${
+              className={`w-full pl-10 pr-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 text-sm sm:text-base ${
                 errors.username ? 'border-red-500' : 'border-gray-300'
               }`}
               required
@@ -148,7 +148,7 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
               placeholder="Enter your email address"
               value={formData.email}
               onChange={handleInputChange}
-              className={`w-full pl-10 pr-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 ${
+              className={`w-full pl-10 pr-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 text-sm sm:text-base ${
                 errors.email ? 'border-red-500' : 'border-gray-300'
               }`}
               required
@@ -169,7 +169,7 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
               placeholder="Create a secure password"
               value={formData.password}
               onChange={handleInputChange}
-              className={`w-full pl-10 pr-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 ${
+              className={`w-full pl-10 pr-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 text-sm sm:text-base ${
                 errors.password ? 'border-red-500' : 'border-gray-300'
               }`}
               required
@@ -190,7 +190,7 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
               placeholder="Confirm your password"
               value={formData.confirmPassword}
               onChange={handleInputChange}
-              className={`w-full pl-10 pr-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 ${
+              className={`w-full pl-10 pr-4 py-3 rounded-xl border-2 transition-all focus:ring-2 focus:ring-blue-500 text-sm sm:text-base ${
                 errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
               }`}
               required
@@ -229,7 +229,7 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
         <button
           type="submit"
           disabled={isLoading}
-          className={`w-full py-3 rounded-xl font-semibold text-white transition-all duration-300 flex items-center justify-center space-x-2 ${
+          className={`w-full py-3 rounded-xl font-semibold text-white transition-all duration-300 flex items-center justify-center space-x-2 text-sm sm:text-base ${
             isLoading
               ? 'bg-gray-400 cursor-not-allowed'
               : 'bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 transform hover:scale-105'

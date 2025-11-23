@@ -79,12 +79,12 @@ export const BiometricPrompt: React.FC<BiometricPromptProps> = ({
 
   if (selectedMethod === 'pin') {
     return (
-      <div className="w-full max-w-md mx-auto bg-white p-8 rounded-2xl shadow-2xl">
+      <div className="w-full max-w-md mx-auto bg-white p-6 sm:p-8 rounded-2xl shadow-2xl sm:max-w-lg md:max-w-xl">
         <div className="text-center mb-6">
-          <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-            <FaKey className="text-green-600 text-2xl" />
+          <div className="bg-green-100 w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+            <FaKey className="text-green-600 text-xl sm:text-2xl" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">Create a PIN</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">Create a PIN</h2>
           <p className="text-gray-600 text-sm">
             Set up a secure PIN for quick access
           </p>
@@ -105,7 +105,7 @@ export const BiometricPrompt: React.FC<BiometricPromptProps> = ({
                 if (pinError) setPinError('');
               }}
               placeholder="Enter PIN"
-              className={`w-full px-4 py-3 rounded-xl border-2 text-center text-lg font-mono tracking-widest focus:ring-2 focus:ring-blue-500 ${
+              className={`w-full px-4 py-3 rounded-xl border-2 text-center text-lg sm:text-xl font-mono tracking-widest focus:ring-2 focus:ring-blue-500 ${
                 pinError ? 'border-red-500' : 'border-gray-300'
               }`}
               maxLength={6}
@@ -127,7 +127,7 @@ export const BiometricPrompt: React.FC<BiometricPromptProps> = ({
                 if (pinError) setPinError('');
               }}
               placeholder="Confirm PIN"
-              className={`w-full px-4 py-3 rounded-xl border-2 text-center text-lg font-mono tracking-widest focus:ring-2 focus:ring-blue-500 ${
+              className={`w-full px-4 py-3 rounded-xl border-2 text-center text-lg sm:text-xl font-mono tracking-widest focus:ring-2 focus:ring-blue-500 ${
                 pinError ? 'border-red-500' : 'border-gray-300'
               }`}
               maxLength={6}
@@ -138,7 +138,7 @@ export const BiometricPrompt: React.FC<BiometricPromptProps> = ({
           </div>
 
           {/* Action Buttons */}
-          <div className="flex space-x-3">
+          <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
             <button
               onClick={() => setSelectedMethod(null)}
               className="flex-1 py-3 rounded-xl border-2 border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition-colors"
@@ -164,12 +164,12 @@ export const BiometricPrompt: React.FC<BiometricPromptProps> = ({
   }
 
   return (
-    <div className="w-full max-w-md mx-auto bg-white p-8 rounded-2xl shadow-2xl">
+    <div className="w-full max-w-md mx-auto bg-white p-6 sm:p-8 rounded-2xl shadow-2xl sm:max-w-lg md:max-w-xl">
       <div className="text-center mb-6">
-        <div className="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-          <FaShieldAlt className="text-purple-600 text-2xl" />
+        <div className="bg-purple-100 w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+          <FaShieldAlt className="text-purple-600 text-xl sm:text-2xl" />
         </div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">Secure Your Account</h2>
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">Secure Your Account</h2>
         <p className="text-gray-600 text-sm">
           Choose your preferred authentication method
         </p>
@@ -183,11 +183,11 @@ export const BiometricPrompt: React.FC<BiometricPromptProps> = ({
         >
           <div className="flex items-center space-x-4">
             <div className="bg-purple-100 p-3 rounded-full group-hover:bg-purple-200 transition-colors">
-              <FaFingerprint className="text-purple-600 text-xl" />
+              <FaFingerprint className="text-purple-600 text-lg sm:text-xl" />
             </div>
             <div className="flex-1">
-              <h3 className="font-semibold text-gray-800">Biometric Authentication</h3>
-              <p className="text-sm text-gray-600">
+              <h3 className="font-semibold text-gray-800 text-sm sm:text-base">Biometric Authentication</h3>
+              <p className="text-xs sm:text-sm text-gray-600">
                 Use your fingerprint, Face ID, or Windows Hello
               </p>
             </div>
@@ -205,11 +205,11 @@ export const BiometricPrompt: React.FC<BiometricPromptProps> = ({
       >
         <div className="flex items-center space-x-4">
           <div className="bg-green-100 p-3 rounded-full group-hover:bg-green-200 transition-colors">
-            <FaKey className="text-green-600 text-xl" />
+            <FaKey className="text-green-600 text-lg sm:text-xl" />
           </div>
           <div className="flex-1">
-            <h3 className="font-semibold text-gray-800">PIN Authentication</h3>
-            <p className="text-sm text-gray-600">
+            <h3 className="font-semibold text-gray-800 text-sm sm:text-base">PIN Authentication</h3>
+            <p className="text-xs sm:text-sm text-gray-600">
               Create a secure 4-6 digit PIN
             </p>
           </div>
@@ -240,7 +240,7 @@ export const BiometricPrompt: React.FC<BiometricPromptProps> = ({
           <button
             onClick={handleBiometricRegistration}
             disabled={isRegistering}
-            className={`w-full py-3 rounded-xl font-semibold text-white transition-all duration-300 flex items-center justify-center space-x-2 ${
+            className={`w-full py-3 rounded-xl font-semibold text-white transition-all duration-300 flex items-center justify-center space-x-2 text-sm sm:text-base ${
               isRegistering
                 ? 'bg-gray-400 cursor-not-allowed'
                 : 'bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700'

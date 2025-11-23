@@ -72,12 +72,12 @@ export const EmailVerification: React.FC<EmailVerificationProps> = ({
   };
 
   return (
-    <div className="w-full max-w-md mx-auto bg-white p-8 rounded-2xl shadow-2xl">
+    <div className="w-full max-w-md mx-auto bg-white p-6 sm:p-8 rounded-2xl shadow-2xl sm:max-w-lg md:max-w-xl">
       <div className="text-center mb-6">
-        <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-          <FaEnvelope className="text-blue-600 text-2xl" />
+        <div className="bg-blue-100 w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+          <FaEnvelope className="text-blue-600 text-xl sm:text-2xl" />
         </div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">Verify Your Email</h2>
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">Verify Your Email</h2>
         <p className="text-gray-600 text-sm">
           We've sent a 6-digit verification code to
         </p>
@@ -95,7 +95,7 @@ export const EmailVerification: React.FC<EmailVerificationProps> = ({
             value={verificationCode}
             onChange={handleCodeChange}
             placeholder="123456"
-            className={`w-full px-4 py-3 rounded-xl border-2 text-center text-lg font-mono tracking-widest focus:ring-2 focus:ring-blue-500 transition-all ${
+            className={`w-full px-4 py-3 rounded-xl border-2 text-center text-lg sm:text-xl font-mono tracking-widest focus:ring-2 focus:ring-blue-500 transition-all ${
               error ? 'border-red-500' : 'border-gray-300'
             }`}
             maxLength={6}
@@ -111,7 +111,7 @@ export const EmailVerification: React.FC<EmailVerificationProps> = ({
         <button
           type="submit"
           disabled={isLoading || verificationCode.length !== 6}
-          className={`w-full py-3 rounded-xl font-semibold text-white transition-all duration-300 flex items-center justify-center space-x-2 ${
+          className={`w-full py-3 rounded-xl font-semibold text-white transition-all duration-300 flex items-center justify-center space-x-2 text-sm sm:text-base ${
             isLoading || verificationCode.length !== 6
               ? 'bg-gray-400 cursor-not-allowed'
               : 'bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 transform hover:scale-105'

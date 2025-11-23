@@ -86,9 +86,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   };
 
   return (
-    <div className="w-full max-w-md mx-auto bg-white p-8 rounded-2xl shadow-2xl">
+    <div className="w-full max-w-md mx-auto bg-white p-6 sm:p-8 rounded-2xl shadow-2xl sm:max-w-lg md:max-w-xl">
       <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">Welcome Back</h2>
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">Welcome Back</h2>
         <p className="text-gray-600 text-sm">
           Sign in to your {selectedRole === 'student' ? 'student' : 'restaurant'} account
         </p>
@@ -101,7 +101,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           <button
             type="button"
             onClick={() => onRoleChange('student')}
-            className={`p-3 rounded-xl border-2 transition-all flex items-center justify-center space-x-2 ${
+            className={`p-3 sm:p-4 rounded-xl border-2 transition-all flex items-center justify-center space-x-2 ${
               selectedRole === 'student'
                 ? 'border-blue-500 bg-blue-50 text-blue-700'
                 : 'border-gray-200 hover:border-gray-300'
@@ -113,7 +113,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           <button
             type="button"
             onClick={() => onRoleChange('restaurant')}
-            className={`p-3 rounded-xl border-2 transition-all flex items-center justify-center space-x-2 ${
+            className={`p-3 sm:p-4 rounded-xl border-2 transition-all flex items-center justify-center space-x-2 ${
               selectedRole === 'restaurant'
                 ? 'border-green-500 bg-green-50 text-green-700'
                 : 'border-gray-200 hover:border-gray-300'
@@ -135,13 +135,13 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           >
             {isAuthenticating ? (
               <>
-                <FaSpinner className="text-blue-600 text-2xl animate-pulse" />
-                <span className="font-semibold text-gray-700">Scanning...</span>
+                <FaSpinner className="text-blue-600 text-lg sm:text-2xl animate-pulse" />
+                <span className="font-semibold text-gray-700 text-sm sm:text-base">Scanning...</span>
               </>
             ) : (
               <>
-                <FaFingerprint className="text-green-600 text-2xl" />
-                <span className="font-semibold text-gray-700">Quick Login with Biometric</span>
+                <FaFingerprint className="text-green-600 text-lg sm:text-2xl" />
+                <span className="font-semibold text-gray-700 text-sm sm:text-base">Quick Login with Biometric</span>
               </>
             )}
           </button>
@@ -164,7 +164,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
               }
               value={credentials.username}
               onChange={handleInputChange}
-              className="w-full pl-10 pr-4 py-3 rounded-xl border-2 border-gray-300 focus:ring-2 focus:ring-blue-500 transition-all"
+              className="w-full pl-10 pr-4 py-3 rounded-xl border-2 border-gray-300 focus:ring-2 focus:ring-blue-500 transition-all text-sm sm:text-base"
               required
             />
           </div>
@@ -181,7 +181,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
                 placeholder="Enter your password"
                 value={credentials.password}
                 onChange={handleInputChange}
-                className="w-full pl-10 pr-4 py-3 rounded-xl border-2 border-gray-300 focus:ring-2 focus:ring-blue-500 transition-all"
+                className="w-full pl-10 pr-4 py-3 rounded-xl border-2 border-gray-300 focus:ring-2 focus:ring-blue-500 transition-all text-sm sm:text-base"
                 required={!credentials.useBiometric}
               />
             </div>
@@ -199,7 +199,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         <button
           type="submit"
           disabled={isLoading || isAuthenticating || (!credentials.password && !credentials.useBiometric)}
-          className={`w-full py-3 rounded-xl font-semibold text-white transition-all duration-300 flex items-center justify-center space-x-2 ${
+          className={`w-full py-3 rounded-xl font-semibold text-white transition-all duration-300 flex items-center justify-center space-x-2 text-sm sm:text-base ${
             isLoading || isAuthenticating || (!credentials.password && !credentials.useBiometric)
               ? 'bg-gray-400 cursor-not-allowed'
               : 'bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 transform hover:scale-105'

@@ -58,7 +58,7 @@ const UnlockCardModal = ({ onSuccess, onCancel }) => {
         )}
         <div className="flex gap-3 mt-6">
           {onCancel && (
-            <motion.button whileTap={tapAnimation} onClick={onCancel} className="flex-1 py-3 sm:py-4 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl sm:rounded-2xl font-bold text-sm sm:text-base">
+            <motion.button whileTap={tapAnimation} onClick={onCancel} className="flex-1 py-3 sm:py-4 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-xl sm:rounded-2xl font-bold text-sm sm:text-base">
               Cancel
             </motion.button>
           )}

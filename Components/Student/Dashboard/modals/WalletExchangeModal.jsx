@@ -29,7 +29,7 @@ const WalletExchangeModal = ({ wallets, onExchange, onClose, onBuyIgifu }) => {
   };
 
   const menuItems = [
-    { title: 'Buy Igifu', icon: <FaShoppingCart />, action: onBuyIgifu, soon: false },
+    { title: 'Buy Igifu', icon: <FaShoppingCart />, action: () => onBuyIgifu(), soon: false },
     { title: 'Your Igifu Card', icon: <FaIdCard />, action: () => {}, soon: false },
     { title: 'Swap Wallets', icon: <FaExchangeAlt />, action: () => setView('swap'), soon: false },
     { title: 'Support', icon: <FaQuestionCircle />, action: () => {}, soon: false },
@@ -107,7 +107,7 @@ const WalletExchangeModal = ({ wallets, onExchange, onClose, onBuyIgifu }) => {
               </div>
 
               <div className="flex gap-3">
-                <motion.button whileTap={tapAnimation} onClick={onClose} className="flex-1 py-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl font-bold">Cancel</motion.button>
+                <motion.button whileTap={tapAnimation} onClick={onClose} className="flex-1 py-3 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-xl font-bold">Cancel</motion.button>
                 <motion.button whileTap={tapAnimation} onClick={handleExchange} disabled={processing || !amount || parseInt(amount) > wallets[fromWallet]} className="flex-[2] py-3 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-xl font-bold disabled:opacity-50 flex items-center justify-center gap-2">
                   {processing ? <FaSpinner className="animate-spin" /> : <><FaExchangeAlt /> Exchange</>}
                 </motion.button>
